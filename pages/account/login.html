@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <h1 class="text-center">{% trans "Sign In" %}</h1>
+</div>
+
+{% get_providers as socialaccount_providers %}
+
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {{ form|crispy }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <div class="d-grid gap-2 mb-3">
+    <button type="submit" class="btn btn-primary">Login</button>
+  </div>
+</form>
+<br>
+<div class="text-center">
+  <a class="small text-decoration-none" href="{% url 'account_reset_password' %}">Forgot Password?</a>
+</div>
+<div class="text-center">
+  <a class="small text-decoration-none" href="{% url 'account_signup' %}">Create an Account!</a>
+</div>
+
+{% endblock %}
