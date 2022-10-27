@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+
 <div class="container">
+    {% if user.is_authenticated %}
     <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12">
             <form method="POST">
@@ -13,6 +15,19 @@
             </form>
         </div>
     </div>
+    {% else %}
+    <div class="row justify-content-center mt-3">
+        <div class="position-fixed text-center">
+            <div class="alert alert-secondary">
+                You are not login
+                <a href="{% url 'account_login' %}" class="btn btn-lg btn-success">Login</a>
+                or
+                <a href="{% url 'account_signup' %}" class="btn btn-lg btn-light">Sign Up</a>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    {% endif %}
 
     {% for post in post_list %}
     <div class="row justify-content-center mt-5">
@@ -23,4 +38,5 @@
     </div>
     {% endfor %}
 </div>
+
 {% endblock content %}
