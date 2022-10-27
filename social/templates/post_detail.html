@@ -4,7 +4,7 @@
 
 <div class="container">
     {% if user.is_authenticated %}
-    <div class="row mt-5">
+    <div class="row mt-3">
         <div class="col-md-5 col-sm-6">
             <a href="{% url 'post-list' %}" class="text-decoration-none">Back to Feed</a>
         </div>
@@ -22,14 +22,25 @@
     </div>
     <br><br>
     {% endif %}
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12 border-bottom">
+            <div class="text-end">
+                {% if request.user == post.author %}
+                <a class="text-decoration-none text-dark mx-1" href="{% url 'post-edit' post.pk %}">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="text-decoration-none text-dark" href="{% url 'post-delete' post.pk %}" >
+                    <i class="fa fa-trash"></i>
+                </a>
+                {% endif %}
+            </div>
             <p><strong>{{ post.author }}</strong> {{ post.created_on }}</p>
             <p>{{ post.body}}</p>
         </div>
     </div>
+    {% if user.is_authenticated %}
     <div class="row justify-content-center mt-3">
-        <div class="col-md-5 col-sm-12">
+        <div class="col-md-5 col-sm-12 mb-4">
             <form method="POST">
                 {% csrf_token %}
                 {{ form|crispy }}
@@ -39,6 +50,24 @@
             </form>
         </div>
     </div>
+    {% endif %}
+    {% for comment in comments %}
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12 border-bottom">
+            <p><strong>{{ comment.author }}</strong> {{ comment.created_on}}</p>
+            <p>{{ comment.comment }}</p>
+            {% if request.user == post.author %}
+                <div class="small mb-1">
+                    <a class="text-decoration-none text-dark mx-1" href="">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a class="text-decoration-none text-dark" href="{% url 'comment-delete' post.pk comment.pk %}" >
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
 </div>
-
 {% endblock content %}
