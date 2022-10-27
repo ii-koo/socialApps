@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+    {% if user.is_authenticated %}
+    <div class="row mt-5">
+        <div class="col-md-5 col-sm-6">
+            <a href="{% url 'post-list' %}" class="text-decoration-none">Back to Feed</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="row justify-content-center mt-3">
+        <div class="position-fixed text-center">
+            <div class="alert alert-secondary">
+                You are not login
+                <a href="{% url 'account_login' %}" class="btn btn-lg btn-success">Login</a>
+                or
+                <a href="{% url 'account_signup' %}" class="btn btn-lg btn-light">Sign Up</a>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    {% endif %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5 col-sm-12 border-bottom">
+            <p><strong>{{ post.author }}</strong> {{ post.created_on }}</p>
+            <p>{{ post.body}}</p>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
