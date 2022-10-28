@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12">
+            <a href="{% url 'post-list' %}" class="btn btn-sm btn-light">Back to Feed</a>
+        </div>
+    </div>
+        {% for profile in profile_list %}
+        <div class="row justify-content-center mt-3">
+            <div class="col-md-5 col-sm-12 border-bottom position-relative">
+                <p><img src="{{ request.user.profile.picture.url }}" width="30px" height="30px" class="rounded-circle">
+                    <a href="{% url 'profile' profile.pk %}" class="text-primary text-decoration-none">
+                    {{ profile.user }}</a></p>
+                {% if profile.location %}
+                    <p>{{ profile.location }}</p>
+                {% endif %}
+                <p>Followers : {{ profile.followers.all.count }}</p>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+{% endblock content %}

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views import View
+from django.db.models import Q
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import Post, Comment, UserProfile
 from .forms import PostForm, CommentForm
@@ -180,3 +181,15 @@ class AddLike(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
+class UserSearchView(View):
+    def get(self, request, *args, **kwargs):
+        query = self.request.GET.get('query')
+        profile_list = UserProfile.objects.filter(
+            Q(user__username__icontains=query)
+        )
+
+        context = {
+            'profile_list': profile_list,
+        }
+
+        return render(request, 'user_search.html', context)

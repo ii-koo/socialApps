@@ -18,9 +18,9 @@
           <a class="nav-link active" aria-current="page" href="{% url 'post-list' %}">Home</a>
         </li>
         {% endif %}
-        <form class="d-flex" role="search">
+        <form class="d-flex" role="search" method="GET" action="{% url 'profile-search' %}">
         <div class="input-group">
-          <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="query" value="{{ request.GET.query }}">
             <button class="btn btn-outline-success" type="submit">
               <i class="fa fa-magnifying-glass"></i>
             </button>
