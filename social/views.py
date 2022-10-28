@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from django.views import View
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import Post, Comment, UserProfile
@@ -104,7 +105,7 @@ class ProfileView(View):
         posts = Post.objects.filter(author=user).order_by('-created_on')
         followers = profile.followers.all()
 
-        is_following = True
+        is_following = None
 
         if len(followers) == 0:
             is_following = False
@@ -157,3 +158,25 @@ class RemoveFollower(LoginRequiredMixin, View):
         profile.followers.remove(request.user)
 
         return redirect('profile', pk=profile.pk)
+
+
+class AddLike(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        post = Post.objects.get(pk=pk)
+
+        is_like = False
+
+        for like in post.likes.all():
+            if like == request.user:
+                is_like = True
+                break
+
+        if not is_like:
+            post.likes.add(request.user)
+        if is_like:
+            post.likes.remove(request.user)
+
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
+
+

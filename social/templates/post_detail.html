@@ -36,6 +36,18 @@
             </div>
             <p><strong>{{ post.author }}</strong> {{ post.created_on }}</p>
             <p>{{ post.body}}</p>
+            <div class="d-flex flex-row">
+                <form action="{% url 'add-like' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ request.path }}" name="next">
+                    <button type="submit" class="btn btn-sm"
+                            style="border:none; box-shadow:none; background-color:transparent">
+                        <i class="fa fa-thumbs-up">
+                            <span class="small">{{ post.likes.all.count }}</span>
+                        </i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
     {% if user.is_authenticated %}
