@@ -1,0 +1,10 @@
+.remove-default-btn{
+    box-shadow:none;
+    border:none;
+    background-color:transparent;
+}
+
+.post-img{
+    float:left;
+    margin-right: 0.5rem;
+}

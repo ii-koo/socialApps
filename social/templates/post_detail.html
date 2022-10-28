@@ -34,14 +34,19 @@
                 </a>
                 {% endif %}
             </div>
-            <p><strong>{{ post.author }}</strong> {{ post.created_on }}</p>
+            <div class="">
+                <a href="{% url 'profile' post.author.profile.pk %}">
+                    <img src="{{ post.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+                </a>
+                <p><strong>{{ post.author }}</strong> {{ post.created_on }}</p>
+            </div>
             <p>{{ post.body}}</p>
             <div class="d-flex flex-row">
                 <form action="{% url 'add-like' post.pk %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" value="{{ request.path }}" name="next">
                     <button type="submit" class="btn btn-sm"
-                            style="border:none; box-shadow:none; background-color:transparent">
+                            style="remove-default-btn">
                         <i class="fa fa-thumbs-up">
                             <span class="small">{{ post.likes.all.count }}</span>
                         </i>
@@ -66,9 +71,14 @@
     {% for comment in comments %}
     <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12 border-bottom">
-            <p><strong>{{ comment.author }}</strong> {{ comment.created_on}}</p>
+            <div class="">
+                <a href="{% url 'profile' comment.author.profile.pk %}">
+                    <img src="{{ comment.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+                </a>
+                <p><strong>{{ comment.author }}</strong> {{ comment.created_on }}</p>
+            </div>
             <p>{{ comment.comment }}</p>
-            {% if request.user == post.author %}
+            {% if request.user == post.author or request.user == comment.author %}
                 <div class="small mb-1">
                     <a class="text-decoration-none text-dark mx-1" href="">
                         <i class="fa fa-edit"></i>

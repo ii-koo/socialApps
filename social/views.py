@@ -12,7 +12,10 @@ from django.urls import reverse_lazy
 # Create your views here.
 class PostListView(View):
     def get(self, request, *args, **kwargs):
-        posts = Post.objects.all().order_by('-created_on')
+        logged_in_user = request.user
+        posts = Post.objects.filter(
+            author__profile__followers__in=[logged_in_user]
+        ).order_by('-created_on')
         form = PostForm()
 
         context = {
@@ -22,18 +25,14 @@ class PostListView(View):
         return render(request, 'post_list.html', context)
 
     def post(self, request, *args, **kwargs):
-        posts = Post.objects.all().order_by('-created_on')
         form = PostForm(request.POST)
 
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.author = request.user
             new_post.save()
-        context = {
-            'post_list': posts,
-            'form': form,
-        }
-        return redirect('post-list', context)
+
+        return redirect('post-list')
 
 
 class PostDetailView(View):
