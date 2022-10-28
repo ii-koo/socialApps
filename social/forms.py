@@ -7,9 +7,11 @@ class PostForm(forms.ModelForm):
         label='',
         widget=forms.Textarea(attrs={
             'rows': 3,
-            'placeholder': 'What do you thinking?'
+            'placeholder': 'What do you thinking?',
+            'style': 'resize:none',
         })
     )
+
     class Meta:
         model = Post
         fields = ['body']

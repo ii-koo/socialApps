@@ -30,7 +30,8 @@
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{{ request.user.profile.picture.url }}" width="20px" height="20px" class="rounded-circle">
               {{ request.user }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
