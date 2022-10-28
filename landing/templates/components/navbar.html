@@ -34,7 +34,7 @@
               {{ request.user }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="#">Account</a></li>
+              <li><a class="dropdown-item" href="{% url 'profile' request.user.profile.pk %}">Account</a></li>
               <li><a class="dropdown-item" href="#">My Post</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>

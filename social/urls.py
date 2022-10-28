@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import PostListView, PostDetailView, PostEditView, PostDeleteView, CommentDeleteView
+from .views import PostListView, PostDetailView, PostEditView, PostDeleteView, CommentDeleteView, \
+    ProfileView, ProfileViewEdit
 
 urlpatterns = [
     path('', PostListView.as_view(), name='post-list'),
@@ -7,5 +8,8 @@ urlpatterns = [
     path('post/<int:pk>/delete', PostDeleteView.as_view(), name='post-delete'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
 
-    path('post/<int:post_pk>/comment/delete/<int:pk>/', CommentDeleteView.as_view(), name='comment-delete'),
+    path('post/<int:post_pk>/comment/delete/<int:pk>', CommentDeleteView.as_view(), name='comment-delete'),
+
+    path('profile/<int:pk>', ProfileView.as_view(), name='profile'),
+    path('profile/<int:pk>/edit', ProfileViewEdit.as_view(), name='profile-edit')
 ]
