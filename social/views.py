@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.views import View
 from django.db.models import Q
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
@@ -13,9 +13,10 @@ from django.urls import reverse_lazy
 class PostListView(View):
     def get(self, request, *args, **kwargs):
         logged_in_user = request.user
-        posts = Post.objects.filter(
-            author__profile__followers__in=[logged_in_user]
-        ).order_by('-created_on')
+        # posts = Post.objects.filter(
+        #     author__profile__followers__in=[logged_in_user]
+        # ).order_by('-created_on')
+        posts = Post.objects.all().order_by('-created_on')
         form = PostForm()
 
         context = {
@@ -78,7 +79,10 @@ class PostEditView(UpdateView, UserPassesTestMixin, LoginRequiredMixin):
 class PostDeleteView(DeleteView, UserPassesTestMixin, LoginRequiredMixin):
     model = Post
     template_name = 'post_delete.html'
-    success_url = reverse_lazy('post-list')
+
+    def get_success_url(self):
+        pk = self.request.user.id
+        return reverse_lazy('profile', kwargs={'pk':   pk})
 
     def test_func(self):
         post = self.get_object()
@@ -192,3 +196,16 @@ class UserSearchView(View):
         }
 
         return render(request, 'user_search.html', context)
+
+
+class ListFollower(View):
+    def get(self, request, pk, *args, **kwargs):
+        profile = UserProfile.objects.get(pk=pk)
+        followers = profile.followers.all()
+
+        context = {
+            'profile': profile,
+            'followers': followers,
+        }
+
+        return render(request, 'followers_list.html', context)
