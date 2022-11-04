@@ -53,6 +53,7 @@
                     </button>
                 </form>
             </div>
+        </div>
     </div>
     {% if user.is_authenticated %}
     <div class="row justify-content-center mt-3">
@@ -74,9 +75,30 @@
                 <a href="{% url 'profile' comment.author.profile.pk %}">
                     <img src="{{ comment.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ comment.author }}</strong> {{ comment.created_on|date:"M d, Y" }}</p>
+                <p><strong>{{ comment.author }}</strong>
+                    <small class="text-secondary mx-1">
+                        {{ comment.created_on|date:"M d, Y" }}
+                    </small>
+                </p>
             </div>
             <p>{{ comment.comment }}</p>
+            <div class="d-flex flex-row mb-1">
+                <form action="{% url 'comment-like' post.pk comment.pk %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ request.path }}" name="next">
+                    <button type="submit" class="btn btn-sm"
+                            style="border:none; box-shadow:none; background-color:transparent">
+                        <i class="fa fa-thumbs-up">
+                            <span class="small">
+                                {% if comment.likes.all.count == 0 %}
+                                {% else %}
+                                    {{ comment.likes.all.count }}
+                                {% endif %}
+                            </span>
+                        </i>
+                    </button>
+                </form>
+            </div>
             {% if request.user == post.author or request.user == comment.author %}
                 <div class="small mb-1">
                     <a class="text-decoration-none text-dark mx-1" href="">

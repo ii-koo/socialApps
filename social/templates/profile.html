@@ -18,7 +18,7 @@
                 <span>
                     {% if request.user == user  %}
                     <a href="{% url 'profile-edit' user.profile.pk %}" class="small text-decoration-none text-dark">
-                        <i class="fa fa-pencil"></i>
+                        <i class="fa fa-edit"></i>
                     </a>
                     {% endif %}
                 </span>
@@ -94,7 +94,16 @@
     {% for post in posts %}
     <div class="row justify-content-center mt-5">
         <div class="col-md-5 col-sm-12 border-bottom position-relative">
-            <p><strong>{{ post.author }}</strong> {{ post.created_on }}</p>
+            <div class="">
+                <a href="{% url 'profile' post.author.profile.pk %}">
+                    <img src="{{ post.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+                </a>
+                <p><strong>{{ post.author }}</strong>
+                    <small class="text-secondary mx-1">
+                        {{ post.created_on|date:"M d, Y" }}
+                    </small>
+                </p>
+            </div>
             <div class="position-relative">
                 <p>{{ post.body}}</p>
                 <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
@@ -106,7 +115,12 @@
                     <button type="submit" class="btn btn-sm"
                             style="border:none; box-shadow:none; background-color:transparent">
                         <i class="fa fa-thumbs-up">
-                            <span class="small">{{ post.likes.all.count }}</span>
+                            <span class="small">
+                                {% if post.likes.all.count == 0 %}
+                                {% else %}
+                                    {{ post.likes.all.count }}
+                                {% endif %}
+                            </span>
                         </i>
                     </button>
                 </form>
