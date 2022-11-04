@@ -10,11 +10,12 @@
         {% for profile in profile_list %}
         <div class="row justify-content-center mt-3">
             <div class="col-md-5 col-sm-12 border-bottom position-relative">
-                <p><img src="{{ request.user.profile.picture.url }}" width="30px" height="30px" class="rounded-circle">
+                <p><img src="{{ profile.picture.url }}" width="30px" height="30px" class="rounded-circle">
                     <a href="{% url 'profile' profile.pk %}" class="text-primary text-decoration-none">
                     {{ profile.user }}</a></p>
                 {% if profile.location %}
-                    <p>{{ profile.location }}</p>
+                    <p>
+                        <i class="fa fa-location-dot"></i> {{ profile.location }}</p>
                 {% endif %}
                 <p>Followers : {{ profile.followers.all.count }}</p>
             </div>

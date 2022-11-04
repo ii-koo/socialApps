@@ -38,9 +38,9 @@
                 </a>
                 <p><strong>
                     {% if post.author.is_superuser == 1 %}
-                        {{ post.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        {{ post.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
                     {% else%}
-                        {{ post.author }}
+                        {{ post.author.profile.name }}
                     {% endif %}
                 </strong>
                     <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>

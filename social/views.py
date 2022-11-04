@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect, HttpRequest
+from django.http import HttpResponseRedirect
 from django.views import View
 from django.db.models import Q
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from .models import Post, Comment, UserProfile
+from .models import Post, Comment, UserProfile, Notification
 from .forms import PostForm, CommentForm
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -13,10 +13,10 @@ from django.urls import reverse_lazy
 class PostListView(View):
     def get(self, request, *args, **kwargs):
         logged_in_user = request.user
-        # posts = Post.objects.filter(
-        #     author__profile__followers__in=[logged_in_user]
-        # ).order_by('-created_on')
-        posts = Post.objects.all().order_by('-created_on')
+        posts = Post.objects.filter(
+            author__profile__followers__in=[logged_in_user]
+        ).order_by('-created_on')
+        # posts = Post.objects.all().order_by('-created_on')
         form = PostForm()
 
         context = {
@@ -59,6 +59,10 @@ class PostDetailView(View):
             new_comment.author = request.user
             new_comment.post = post
             new_comment.save()
+
+            notification = Notification.objects.create(notification_type=2, from_user=request.user,
+                                                       to_user=post.author, post=post)
+
         return redirect('post-detail', pk=post.id)
 
 
@@ -147,6 +151,8 @@ class AddCommentLike(LoginRequiredMixin, View):
 
         if not is_like:
             comment.likes.add(request.user)
+            notification = Notification.objects.create(notification_type=1, from_user=request.user,
+                                                       to_user=comment.author, comment=comment)
         if is_like:
             comment.likes.remove(request.user)
 
@@ -166,6 +172,9 @@ class CommentReplyView(LoginRequiredMixin, View):
             new_comment.post = post
             new_comment.parent = parent_comment
             new_comment.save()
+
+            notification = Notification.objects.create(notification_type=2, from_user=request.user,
+                                                       to_user=parent_comment.author, comment=new_comment)
 
         return redirect('post-detail', pk=post_pk)
 
@@ -188,6 +197,9 @@ class AddFollower(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         profile = UserProfile.objects.get(pk=pk)
         profile.followers.add(request.user)
+
+        notification = Notification.objects.create(notification_type=3, from_user=request.user,
+                                                   to_user=profile.user)
 
         return redirect('profile', pk=profile.pk)
 
@@ -213,6 +225,8 @@ class AddLike(LoginRequiredMixin, View):
 
         if not is_like:
             post.likes.add(request.user)
+            notification = Notification.objects.create(notification_type=1, from_user=request.user,
+                                                       to_user=post.author, post=post)
         if is_like:
             post.likes.remove(request.user)
 
@@ -245,3 +259,25 @@ class ListFollower(View):
         }
 
         return render(request, 'followers_list.html', context)
+
+
+class PostNotification(View):
+    def get(self, request, notification_pk, post_pk, *args, **kwargs):
+        notification = Notification.objects.get(pk=notification_pk)
+        post = Post.objects.get(pk=post_pk)
+
+        notification.user_has_seen = True
+        notification.save()
+
+        return redirect('post-detail', pk=post_pk)
+
+
+class FollowNotification(View):
+    def get(self, request, notification_pk, profile_pk, *args, **kwargs):
+        notification = Notification.objects.get(pk=notification_pk)
+        profile = UserProfile.objects.get(pk=profile_pk)
+
+        notification.user_has_seen = True
+        notification.save()
+
+        return redirect('profile', pk=profile_pk)

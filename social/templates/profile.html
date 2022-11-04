@@ -24,15 +24,16 @@
                 </span>
                 </p>
                 {% else %}
-                <h5 class="mt-2 text-center">@{{ user.username }}</h5>
+                <p class="mt-2 text-center">@{{ user.username }}
                 <span>
                     {% if request.user == user  %}
+                    <a href="{% url 'profile-edit' user.profile.pk %}" class="small text-decoration-none text-dark">
                     <i class="fa fa-pencil"></i>
-                    <a href="{% url 'profile-edit' user.profile.pk %}" class="small text-decoration-none">
                     </a>
                     {% endif %}
                 </span>
                 {% endif %}
+                </p>
             </div>
 
             {% if profile.location %}
