@@ -68,7 +68,9 @@
         </div>
     </div>
     {% endif %}
+
     {% for comment in comments %}
+    {% if comment.is_parent %}
     <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12 border-bottom">
             <div class="">
@@ -98,6 +100,10 @@
                         </i>
                     </button>
                 </form>
+                <button class="btn btn-sm remove-default-btn mx-2" type="submit"
+                        onclick="commentReplyToggle( '{{ comment.pk }}' )">
+                    <i class="fa fa-reply"></i>
+                </button>
             </div>
             {% if request.user == post.author or request.user == comment.author %}
                 <div class="small mb-1">
@@ -110,7 +116,39 @@
                 </div>
             {% endif %}
         </div>
+        <div class="row justify-content-center mt-3 d-none" id="{{ comment.pk }}">
+            <div class="col-md-5 col-sm-12 mb-4">
+                <form method="POST" action="{% url 'comment-reply' post.pk comment.pk %}">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    {% for child_comment in comment.children %}
+    <div class="row justify-content-center mt-3 mb-5 child-comment">
+        <div class="col-md-5 col-sm-12 border-bottom">
+            <div class="">
+                <a href="{% url 'profile' child_comment.author.profile.pk %}">
+                    <img src="{{ child_comment.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+                </a>
+                <p><strong>{{ child_comment.author }}</strong>
+                    <small class="text-secondary mx-1">
+                        {{ child_comment.created_on|date:"M d, Y" }}
+                    </small>
+                </p>
+            </div>
+            <p>{{ child_comment.comment }}</p>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    {% endif %}
     {% endfor %}
 </div>
 {% endblock content %}
