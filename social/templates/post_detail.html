@@ -4,11 +4,6 @@
 
 <div class="container">
     {% if user.is_authenticated %}
-    <div class="row mt-3">
-        <div class="col-md-5 col-sm-6">
-            <a href="{% url 'post-list' %}" class="text-decoration-none">Back to Feed</a>
-        </div>
-    </div>
     {% else %}
     <div class="row justify-content-center mt-3">
         <div class="position-fixed text-center">
@@ -38,7 +33,7 @@
                 <a href="{% url 'profile' post.author.profile.pk %}">
                     <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ post.author }}</strong> {{ post.created_on|date:"M d, Y" }}</p>
+                <p><strong>{{ post.author }}</strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
             <p>{{ post.body}}</p>
             <div class="d-flex flex-row">
@@ -48,7 +43,12 @@
                     <button type="submit" class="btn btn-sm"
                             style="border:none; box-shadow:none; background-color:transparent">
                         <i class="fa fa-thumbs-up">
-                            <span class="small">{{ post.likes.all.count }}</span>
+                            <span class="small">
+                                {% if post.likes.all.count == 0 %}
+                                {% else %}
+                                    {{ post.likes.all.count }}
+                                {% endif %}
+                            </span>
                         </i>
                     </button>
                 </form>

@@ -134,6 +134,26 @@ class ProfileView(View):
         return render(request, 'profile.html', context)
 
 
+class AddCommentLike(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        comment = Comment.objects.get(pk=pk)
+
+        is_like = False
+
+        for like in comment.likes.all():
+            if like == request.user:
+                is_like = True
+                break
+
+        if not is_like:
+            comment.likes.add(request.user)
+        if is_like:
+            comment.likes.remove(request.user)
+
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
+
+
 class ProfileViewEdit(UpdateView, UserPassesTestMixin, LoginRequiredMixin):
     model = UserProfile
     fields = ['name', 'bio', 'birth_date', 'location', 'picture']
