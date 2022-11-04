@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12">
+            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-sm btn-light">Back to profile</a>
+        </div>
+    </div>
+    {% for notification in notifications %}
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12 border-bottom position-relative">
+            {% if notification.post %}
+                {% if notification.notification_type == 1%}
+                <p>
+                    <a href="{% url 'profile' notification.from_user.profile.pk %}">
+                        <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    {{ notification.from_user.profile.name }}
+                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                       class="text-decoration-none">
+                        liked your post.
+                    </a>
+                    on {{ notification.date|date:"F, d y" }}
+                </p>
+                {% elif notification.notification_type == 2 %}
+                <p>
+                    <a href="{% url 'profile' notification.from_user.profile.pk %}">
+                        <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    {{ notification.from_user.profile.name }}
+                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                       class="text-decoration-none">
+                        commented your post.
+                    </a>
+                    on {{ notification.date|date:"F, d y" }}
+                </p>
+                {% endif %}
+            {% elif notification.comment %}
+                {% if notification.notification_type == 1%}
+                <p>
+                    <a href="{% url 'profile' notification.from_user.profile.pk %}">
+                        <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    {{ notification.from_user.profile.name }}
+                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                       class="text-decoration-none">
+                        liked your comment.
+                    </a>
+                    on {{ notification.date|date:"F, d y" }}
+                </p>
+                {% elif notification.notification_type == 2 %}
+                <p>
+                    <a href="{% url 'profile' notification.from_user.profile.pk %}">
+                        <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    {{ notification.from_user.profile.name }}
+                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                       class="text-decoration-none">
+                        replied your comment.
+                    </a>
+                    on {{ notification.date|date:"F, d y" }}
+                </p>
+                {% endif %}
+            {% else %}
+                <p>
+                    <a href="{% url 'profile' notification.from_user.profile.pk %}">
+                        <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    {{ notification.from_user.profile.name }}
+                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                       class="text-decoration-none">
+                        has started following you.
+                    </a>
+                    on {{ notification.date|date:"F, d y" }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

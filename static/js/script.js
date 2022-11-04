@@ -8,9 +8,8 @@ function commentReplyToggle(parent_id){
     }
 }
 
-function commentReplyEditToggle(parent_id){
-    const row = document.getElementById(parent_id);
-
+function showNotification(){
+    const row = document.getElementById('notification-container');
     if(row.classList.contains('d-none')){
         row.classList.remove('d-none');
     }else{

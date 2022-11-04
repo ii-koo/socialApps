@@ -281,3 +281,14 @@ class FollowNotification(View):
         notification.save()
 
         return redirect('profile', pk=profile_pk)
+
+
+class NotificationListsView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+        notifications = Notification.objects.filter(to_user=pk).order_by('-date')
+
+        context = {
+            'notifications':notifications
+        }
+
+        return render(request, 'notification_lists.html', context)
