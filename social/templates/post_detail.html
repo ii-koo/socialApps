@@ -33,7 +33,13 @@
                 <a href="{% url 'profile' post.author.profile.pk %}">
                     <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ post.author }}</strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+                <p><strong>
+                    {% if post.author.is_superuser == 1 %}
+                        {{ post.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ post.author }}
+                    {% endif %}
+                </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
             <p>{{ post.body}}</p>
             <div class="d-flex flex-row">
@@ -74,14 +80,16 @@
     <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12 border-bottom">
             <div class="">
-                <a href="{% url 'profile' comment.author.profile.pk %}">
-                    <img src="{{ comment.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+                <a href="{% url 'profile' post.author.profile.pk %}">
+                    <img src="{{ comment.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ comment.author }}</strong>
-                    <small class="text-secondary mx-1">
-                        {{ comment.created_on|date:"M d, Y" }}
-                    </small>
-                </p>
+                <p><strong>
+                    {% if comment.author.is_superuser == 1 %}
+                        {{ comment.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ comment.author }}
+                    {% endif %}
+                </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
             <p>{{ comment.comment }}</p>
             <div class="d-flex flex-row mb-1">
@@ -134,17 +142,36 @@
         <div class="col-md-5 col-sm-12 border-bottom">
             <div class="">
                 <a href="{% url 'profile' child_comment.author.profile.pk %}">
-                    <img src="{{ child_comment.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+                    <img src="{{ child_comment.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ child_comment.author }}</strong>
-                    <small class="text-secondary mx-1">
-                        {{ child_comment.created_on|date:"M d, Y" }}
-                    </small>
-                </p>
+                <p><strong>
+                    {% if child_comment.author.is_superuser == 1 %}
+                        {{ child_comment.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ child_comment.author }}
+                    {% endif %}
+                </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
             <p>{{ child_comment.comment }}</p>
-
+<!--            <button class="btn btn-sm remove-default-btn mx-2" type="submit"-->
+<!--                        onclick="commentReplyEditToggle( '{{ child_comment.pk }}' )">-->
+<!--                <i class="fa fa-pencil"></i>-->
+<!--            </button>-->
+            <a class="text-decoration-none text-dark" href="{% url 'comment-delete' post.pk child_comment.pk %}" >
+                <i class="fa fa-trash"></i>
+            </a>
         </div>
+<!--        <div class="row justify-content-center mt-3 d-none" id="{{ child_comment.pk }}">-->
+<!--            <div class="col-md-5 col-sm-12 mb-4">-->
+<!--                <form method="POST" action="{% url 'comment-reply' post.pk child_comment.pk %}">-->
+<!--                    {% csrf_token %}-->
+<!--                    {{ form|crispy }}-->
+<!--                    <div class="d-grid gap-2">-->
+<!--                        <button class="btn btn-success">Submit</button>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
     {% endfor %}
 

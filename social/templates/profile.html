@@ -11,7 +11,7 @@
                 {% if profile.name %}
                 <p class="mt-2">
                     {% if profile.user.is_superuser == 1 %}
-                        {{ profile.name }} <i class="fa-solid fa-circle-check"></i>
+                        {{ profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
                     {% else%}
                         {{ profile.name }}
                     {% endif %}

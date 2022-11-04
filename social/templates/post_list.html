@@ -36,7 +36,13 @@
                 <a href="{% url 'profile' post.author.profile.pk %}">
                     <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ post.author }}</strong>
+                <p><strong>
+                    {% if post.author.is_superuser == 1 %}
+                        {{ post.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ post.author }}
+                    {% endif %}
+                </strong>
                     <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
             <div class="position-relative">
