@@ -144,7 +144,7 @@
     </div>
 
     {% for child_comment in comment.children %}
-    <div class="row justify-content-center mt-3 mb-5 child-comment">
+    <div class="row justify-content-center mt-3 mb-3 child-comment">
         <div class="col-md-5 col-sm-12 border-bottom">
             <div class="">
                 <a href="{% url 'profile' child_comment.author.profile.pk %}">

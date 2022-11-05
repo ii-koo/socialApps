@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views import View
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import Post, Comment, UserProfile, Notification
 from .forms import PostForm, CommentForm
@@ -16,13 +16,14 @@ class PostListView(View):
         # if user has no followers, all posts will be displayed
         chk_foll = UserProfile.objects.filter(followers=request.user).count()
         if chk_foll < 1:
-            posts = Post.objects.all()
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).all().order_by('-created_on')
         else:
             logged_in_user = request.user
-            posts = Post.objects.filter(
-                author__profile__followers__in=[logged_in_user]
-            ).order_by('-created_on')
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter\
+                    (Q(author__profile__followers__in=[logged_in_user]) | Q(author__profile__name=request.user)).order_by('-created_on')
+
         form = PostForm()
+
         context = {
             'post_list': posts,
             'form': form,
@@ -242,7 +243,8 @@ class UserSearchView(View):
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('query')
         profile_list = UserProfile.objects.filter(
-            Q(user__username__icontains=query)
+            Q(user__username__icontains=query) |
+            Q(name__icontains=query)
         )
 
         context = {
@@ -289,6 +291,7 @@ class FollowNotification(View):
 
 class NotificationListsView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
+
         notifications = Notification.objects.filter(to_user=pk).order_by('-date')
 
         context = {

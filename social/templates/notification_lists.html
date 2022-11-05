@@ -4,14 +4,14 @@
 <div class="container">
     <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12">
-            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-sm btn-light">Back to profile</a>
+            <a href="{% url 'profile' request.user.id %}" class="btn btn-sm btn-light">Back to profile</a>
         </div>
     </div>
     {% for notification in notifications %}
     <div class="row justify-content-center mt-3">
         <div class="col-md-5 col-sm-12 border-bottom position-relative">
             {% if notification.post %}
-                {% if notification.notification_type == 1%}
+                {% if notification.notification_type == 1 %}
                 <p>
                     <a href="{% url 'profile' notification.from_user.profile.pk %}">
                         <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
@@ -43,7 +43,7 @@
                         <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                     </a>
                     {{ notification.from_user.profile.name }}
-                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                    <a href="{% url 'post-notification' notification.pk notification.comment.post.pk %}"
                        class="text-decoration-none">
                         liked your comment.
                     </a>
@@ -55,7 +55,7 @@
                         <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                     </a>
                     {{ notification.from_user.profile.name }}
-                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                    <a href="{% url 'post-notification' notification.pk notification.profile.pk %}"
                        class="text-decoration-none">
                         replied your comment.
                     </a>

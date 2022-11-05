@@ -12,7 +12,14 @@
             <div class="col-md-5 col-sm-12 border-bottom position-relative">
                 <p><img src="{{ profile.picture.url }}" width="30px" height="30px" class="rounded-circle">
                     <a href="{% url 'profile' profile.pk %}" class="text-primary text-decoration-none">
-                    {{ profile.user }}</a></p>
+                    {% if profile.user.is_superuser %}
+                        {{ profile.name }}</a><span class="small text-secondary">
+                        <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        @{{ profile.user.username }}</span>
+                    </p>
+                    {% else%}
+                        {{ profile.name }}</a><span class="small text-secondary"> @{{ profile.user.username }}</span></p>
+                    {% endif %}
                 {% if profile.location %}
                     <p>
                         <i class="fa fa-location-dot"></i> {{ profile.location }}</p>
