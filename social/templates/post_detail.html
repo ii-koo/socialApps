@@ -35,9 +35,9 @@
                 </a>
                 <p><strong>
                     {% if post.author.is_superuser == 1 %}
-                        {{ post.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        {{ post.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
                     {% else%}
-                        {{ post.author }}
+                        {{ post.author.profile.name }}
                     {% endif %}
                 </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
@@ -46,8 +46,7 @@
                 <form action="{% url 'add-like' post.pk %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" value="{{ request.path }}" name="next">
-                    <button type="submit" class="btn btn-sm"
-                            style="border:none; box-shadow:none; background-color:transparent">
+                    <button type="submit" class="btn btn-sm remove-default-btn">
                         <i class="fa fa-thumbs-up">
                             <span class="small">
                                 {% if post.likes.all.count == 0 %}
@@ -58,6 +57,13 @@
                         </i>
                     </button>
                 </form>
+                <button class="btn btn-sm remove-default-btn px-3">
+                        <i class="fa fa-comment">
+                            <span class="small">
+                                {{ total_comments }}
+                            </span>
+                        </i>
+                </button>
             </div>
         </div>
     </div>
@@ -85,9 +91,9 @@
                 </a>
                 <p><strong>
                     {% if comment.author.is_superuser == 1 %}
-                        {{ comment.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        {{ comment.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
                     {% else%}
-                        {{ comment.author }}
+                        {{ comment.author.profile.name }}
                     {% endif %}
                 </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
@@ -146,9 +152,9 @@
                 </a>
                 <p><strong>
                     {% if child_comment.author.is_superuser == 1 %}
-                        {{ child_comment.author.username }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        {{ child_comment.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
                     {% else%}
-                        {{ child_comment.author }}
+                        {{ child_comment.author.profile.name }}
                     {% endif %}
                 </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>

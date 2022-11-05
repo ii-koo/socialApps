@@ -33,7 +33,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="{{ request.user.profile.picture.url }}" width="20px" height="20px" class="rounded-circle">
-              {{ request.user }}
+              {{ request.user.profile.name }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="{% url 'profile' request.user.profile.pk %}">Account</a></li>

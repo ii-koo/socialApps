@@ -23,6 +23,7 @@
                     {% endif %}
                 </span>
                 </p>
+                    <span class="small text-secondary">@{{ user.username }}</span>
                 {% else %}
                 <p class="mt-2 text-center">@{{ user.username }}
                 <span>
@@ -99,7 +100,7 @@
                 <a href="{% url 'profile' post.author.profile.pk %}">
                     <img src="{{ post.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ post.author }}</strong>
+                <p><strong>{{ post.author.profile.name }}</strong>
                     <small class="text-secondary mx-1">
                         {{ post.created_on|date:"M d, Y" }}
                     </small>

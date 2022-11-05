@@ -12,13 +12,17 @@ from django.urls import reverse_lazy
 # Create your views here.
 class PostListView(View):
     def get(self, request, *args, **kwargs):
-        logged_in_user = request.user
-        posts = Post.objects.filter(
-            author__profile__followers__in=[logged_in_user]
-        ).order_by('-created_on')
-        # posts = Post.objects.all().order_by('-created_on')
-        form = PostForm()
 
+        # if user has no followers, all posts will be displayed
+        chk_foll = UserProfile.objects.filter(followers=request.user).count()
+        if chk_foll < 1:
+            posts = Post.objects.all()
+        else:
+            logged_in_user = request.user
+            posts = Post.objects.filter(
+                author__profile__followers__in=[logged_in_user]
+            ).order_by('-created_on')
+        form = PostForm()
         context = {
             'post_list': posts,
             'form': form,
@@ -40,13 +44,13 @@ class PostDetailView(View):
     def get(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=pk)
         form = CommentForm()
-
         comments = Comment.objects.filter(post=post).order_by('-created_on')
-
+        total_comments = Comment.objects.filter(post=post).order_by('-created_on').count()
         context = {
             'post': post,
             'form': form,
             'comments': comments,
+            'total_comments': total_comments,
         }
         return render(request, 'post_detail.html', context)
 
@@ -86,7 +90,7 @@ class PostDeleteView(DeleteView, UserPassesTestMixin, LoginRequiredMixin):
 
     def get_success_url(self):
         pk = self.request.user.id
-        return reverse_lazy('profile', kwargs={'pk':   pk})
+        return reverse_lazy('profile', kwargs={'pk': pk})
 
     def test_func(self):
         post = self.get_object()
@@ -288,7 +292,7 @@ class NotificationListsView(LoginRequiredMixin, View):
         notifications = Notification.objects.filter(to_user=pk).order_by('-date')
 
         context = {
-            'notifications':notifications
+            'notifications': notifications
         }
 
         return render(request, 'notification_lists.html', context)
