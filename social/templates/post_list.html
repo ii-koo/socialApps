@@ -70,7 +70,10 @@
                     <button class="btn btn-sm remove-default-btn px-3">
                             <i class="fa fa-comment">
                                 <span class="small">
-                                    {{ post.number_of_comments}}
+                                    {% if post.number_of_comments == 0 %}
+                                {% else %}
+                                    {{ post.number_of_comments }}
+                                {% endif %}
                                 </span>
                             </i>
                     </button>

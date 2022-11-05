@@ -20,7 +20,7 @@ class PostListView(View):
         else:
             logged_in_user = request.user
             posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter\
-                    (Q(author__profile__followers__in=[logged_in_user]) | Q(author__profile__name=request.user)).order_by('-created_on')
+                    (Q(author__profile__followers__in=[logged_in_user.id]) | Q(author__profile__name=request.user.profile.name)).order_by('-created_on')
 
         form = PostForm()
 
