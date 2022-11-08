@@ -42,6 +42,13 @@
               <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>
             </ul>
           </li>
+          <li>
+            <div class="nav-item inbox-icon-container mt-2">
+              <a href="{% url 'inbox' %}" class="inbox-icon">
+                <i class="fa fa-comments"></i>
+              </a>
+            </div>
+          </li>
           <li class="nav-item">
             {% show_notifications %}
           </li>
