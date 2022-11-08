@@ -9,6 +9,13 @@
     margin-right: 0.5rem;
 }
 
+.post-image{
+    max-width:100%;
+    height:auto;
+    border-radius:10px;
+    margin-botton:10px;
+}
+
 .posted{
     margin-left: 2rem;
 }

@@ -31,7 +31,7 @@ class PostListView(View):
         return render(request, 'post_list.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
 
         if form.is_valid():
             new_post = form.save(commit=False)
