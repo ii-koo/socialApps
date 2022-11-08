@@ -49,10 +49,16 @@
             </div>
             <div class="position-relative">
                 <p>{{ post.body}}</p>
-                {% if post.image %}
-                <img src="{{ post.image.url }}" class="post-image">
+                 <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
+                {% if post.image.count > 0 %}
+                    <div class="row">
+                        {% for img in post.image.all %}
+                            <div class="col-md-6 col xs-10">
+                                <img src="{{ img.image.url }}" class="post-image">
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endif %}
-                <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
             </div>
             <div class="d-flex flex-row">
                 <form action="{% url 'add-like' post.pk %}" method="POST">

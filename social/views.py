@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q, Count
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from .models import Post, Comment, UserProfile, Notification, ThreadModel, MessangerModel
+from .models import Post, Comment, UserProfile, Notification, ThreadModel, MessangerModel, Image
 from .forms import PostForm, CommentForm, ThreadForm, MessangerForm
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -35,10 +35,18 @@ class PostListView(View):
 
     def post(self, request, *args, **kwargs):
         form = PostForm(request.POST, request.FILES)
+        files = request.FILES.getlist('image')
 
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.author = request.user
+            new_post.save()
+
+            for f in files:
+                img = Image(image=f)
+                img.save()
+                new_post.image.add(img)
+
             new_post.save()
 
         return redirect('post-list')
