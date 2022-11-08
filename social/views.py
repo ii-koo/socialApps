@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views import View
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q, Count
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
@@ -291,6 +292,17 @@ class FollowNotification(View):
         return redirect('profile', pk=profile_pk)
 
 
+class ThreadNotification(View):
+    def get(self, request, notification_pk, object_pk, *args, **kwargs):
+        notification = Notification.objects.get(pk=notification_pk)
+        thread = ThreadModel.objects.get(pk=object_pk)
+
+        notification.user_has_seen = True
+        notification.save()
+
+        return redirect('thread', pk=object_pk)
+
+
 class NotificationListsView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         notifications = Notification.objects.filter(to_user=pk).order_by('-date')
@@ -327,25 +339,26 @@ class CreateThread(View):
 
         username = request.POST.get('username')
 
-        # try:
-        receiver = User.objects.get(username=username)
-        if ThreadModel.objects.filter(user=request.user, receiver=receiver).exists():
-            thread = ThreadModel.objects.filter(user=request.user, receiver=receiver)[0]
-            return redirect('thread', pk=thread.pk)
-        elif ThreadModel.objects.filter(user=receiver, receiver=request.user).exists():
-            thread = ThreadModel.objects.filter(user=receiver, receiver=request.user)[0]
-            return redirect('thread', pk=thread.pk)
+        try:
+            receiver = User.objects.get(username=username)
+            if ThreadModel.objects.filter(user=request.user, receiver=receiver).exists():
+                thread = ThreadModel.objects.filter(user=request.user, receiver=receiver)[0]
+                return redirect('thread', pk=thread.pk)
+            elif ThreadModel.objects.filter(user=receiver, receiver=request.user).exists():
+                thread = ThreadModel.objects.filter(user=receiver, receiver=request.user)[0]
+                return redirect('thread', pk=thread.pk)
 
-        if form.is_valid():
-            thread = ThreadModel(
-                user=request.user,
-                receiver=receiver
-            )
-            thread.save()
+            if form.is_valid():
+                thread = ThreadModel(
+                    user=request.user,
+                    receiver=receiver
+                )
+                thread.save()
 
-            return redirect('thread', pk=thread.pk)
-        # except:
-        return redirect('create-thread')
+                return redirect('thread', pk=thread.pk)
+        except:
+            messages.error(request, 'Invalid Username.')
+            return redirect('create-thread')
 
 
 class ThreadView(View):
@@ -365,18 +378,25 @@ class ThreadView(View):
 
 class CreateMessage(View):
     def post(self, request, pk, *args, **kwargs):
+        form = MessangerForm(request.POST, request.FILES)
         thread = ThreadModel.objects.get(pk=pk)
         if thread.receiver == request.user:
             receiver = thread.user
         else:
             receiver = thread.receiver
 
-        message = MessangerModel(
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.thread = thread
+            message.sender_user = request.user
+            message.receiver_user = receiver
+            message.save()
+
+        notification = Notification.objects.create(
+            notification_type=4,
+            from_user=request.user,
+            to_user=receiver,
             thread=thread,
-            sender_user=request.user,
-            receiver_user=receiver,
-            body=request.POST.get('message')
         )
 
-        message.save()
         return redirect('thread', pk=pk)

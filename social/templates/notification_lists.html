@@ -62,13 +62,25 @@
                     on {{ notification.date|date:"F, d y" }}
                 </p>
                 {% endif %}
+            {% elif notification.thread %}
+                <p>
+                    <a href="{% url 'profile' notification.from_user.profile.pk %}">
+                        <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    {{ notification.from_user.profile.name }}
+                    <a href="{% url 'thread-notification' notification.pk notification.thread.pk %}"
+                       class="text-decoration-none">
+                        sent you a message.
+                    </a>
+                    on {{ notification.date|date:"F, d y" }}
+                </p>
             {% else %}
                 <p>
                     <a href="{% url 'profile' notification.from_user.profile.pk %}">
                         <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                     </a>
                     {{ notification.from_user.profile.name }}
-                    <a href="{% url 'post-notification' notification.pk notification.post.pk %}"
+                    <a href="{% url 'post-notification' notification.pk notification.from_user.profile.pk %}"
                        class="text-decoration-none">
                         has started following you.
                     </a>

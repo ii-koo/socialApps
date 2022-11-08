@@ -1,7 +1,7 @@
 <div class="dropdown">
     <button type="button" class="remove-default-btn mt-2" onclick="showNotification()">
         <i class="fa fa-bell">
-            {% if notifications.count < 1 or notifications.to_user == request.user.id %}
+            {% if notifications.count < 1 %}
             {% else %}
                 <span class="small position-absolute top-0 start-100 translate-middle badge
                 rounded-pill bg-danger notification-badge mt-3">
@@ -26,17 +26,22 @@
                 </div>
                 {% endif %}
             {% elif notification.comment %}
-                {% if notification.comment == 1%}
+                {% if notification.notification_type == 1%}
                 <div class="dropdown-item-parent">
                     <a href="{% url 'post-notification' notification.pk notification.comment.post.pk %}">
                         {{ notification.from_user }} liked your comment.</a>
                 </div>
-                {% elif notification.comment == 2 %}
+                {% elif notification.notification_type == 2 %}
                 <div class="dropdown-item-parent">
                     <a href="{% url 'post-notification' notification.pk notification.comment.post.pk %}">
                         {{ notification.from_user }} replied your comment.</a>
                 </div>
                 {% endif %}
+            {% elif notification.thread %}
+                <div class="dropdown-item-parent">
+                    <a href="{% url 'thread-notification' notification.pk notification.thread.pk %}">
+                        {{ notification.from_user }} sent you a message.</a>
+                </div>
             {% else %}
                 <div class="dropdown-item-parent">
                     <a href="{% url 'follow-notification' notification.pk notification.from_user.profile.pk %}">
