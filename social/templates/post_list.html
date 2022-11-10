@@ -89,7 +89,24 @@
                             </i>
                     </button>
                  </form>
+                <button class="btn btn-sm remove-default-btn px-3" onclick="sharedToggle('{{ post.pk }}')">
+                    <i class="fa fa-share">
+                        <span class="small">
+                            {% if post.shared_user == 0 %}
+                            {% else %}
+                            {{ post.shared_user.count.all }}
+                            {% endif %}
+                        </span>
+                    </i>
+                </button>
             </div>
+            <form action="{% url 'post-detail' post.pk %}" method="POST" class="d-none border-bottom mb-3" id="{{ post.pk }}">
+                {% csrf_token %}
+                {{ shared_form|crispy }}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">Share the Post</button>
+                </div>
+            </form>
         </div>
     </div>
     {% endfor %}

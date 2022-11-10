@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import PostListView, PostDetailView, PostEditView, PostDeleteView, CommentDeleteView, \
     ProfileView, ProfileViewEdit, AddFollower, RemoveFollower, ListFollower,\
-    AddLike, AddCommentLike, CommentReplyView, UserSearchView, PostNotification, FollowNotification,\
+    AddLike, AddCommentLike, CommentReplyView, SharedPostView,\
+    UserSearchView, PostNotification, FollowNotification,\
     NotificationListsView, ThreadNotification, ListThread, CreateThread, ThreadView, CreateMessage
 
 urlpatterns = [
@@ -14,6 +15,7 @@ urlpatterns = [
     path('post/<int:post_pk>/comment/delete/<int:pk>', CommentDeleteView.as_view(), name='comment-delete'),
     path('post/<int:pk>/like', AddLike.as_view(), name='add-like'),
     path('post/<int:post_pk>/comment/<int:pk>/like', AddCommentLike.as_view(), name='comment-like'),
+    path('post/<int:pk>/share', SharedPostView.as_view(), name='shared-post'),
 
     path('profile/<int:pk>', ProfileView.as_view(), name='profile'),
     path('profile/<int:pk>/edit', ProfileViewEdit.as_view(), name='profile-edit'),

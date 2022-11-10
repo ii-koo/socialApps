@@ -12,8 +12,8 @@
 .post-image{
     max-width:100%;
     height:auto;
-    border-radius:10px;
-    margin-botton:10px;
+    border-radius:5px;
+    margin-botton:5px;
 }
 
 .posted{
@@ -126,4 +126,8 @@
     border-radius: 0px;
     max-width: 90%;
     height:auto;
+}
+
+.shared-post{
+    margin-lef:30px;
 }

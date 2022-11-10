@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views import View
+from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q, Count
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import Post, Comment, UserProfile, Notification, ThreadModel, MessangerModel, Image
-from .forms import PostForm, CommentForm, ThreadForm, MessangerForm
+from .forms import PostForm, CommentForm, ThreadForm, MessangerForm, SharedForm
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 
@@ -26,9 +27,11 @@ class PostListView(View):
                     author__profile__name=request.user.profile.name)).order_by('-created_on')
 
         form = PostForm()
+        shared_form = SharedForm()
 
         context = {
             'post_list': posts,
+            'shared_form': shared_form,
             'form': form,
         }
         return render(request, 'post_list.html', context)
@@ -248,6 +251,31 @@ class AddLike(LoginRequiredMixin, View):
 
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
+
+
+class SharedPostView(View):
+    def post(self, request, pk, *args, **kwargs):
+        original_post = Post.objects.get(pk=pk)
+        form = SharedForm(request.POST)
+
+        if form.is_valid():
+            new_post = Post(
+                shared_body=self.request.POST.get('body'),
+                body=original_post.body,
+                author=original_post.author,
+                created_on=original_post.created_on,
+                shared_user=request.user,
+                shared_on=timezone.now(),
+            )
+
+            new_post.save()
+
+            for img in original_post.image.all():
+                new_post.image.add(img)
+
+            new_post.save()
+
+        return redirect('post-list')
 
 
 class UserSearchView(View):
