@@ -18,13 +18,13 @@ class PostListView(View):
 
         # if user has no followers, all posts will be displayed
         chk_foll = UserProfile.objects.filter(followers=request.user).count()
-        if chk_foll < 1:
-            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).all().order_by('-created_on')
+        if chk_foll < 1 or chk_foll is None:
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).order_by('-shared_on', '-created_on')
         else:
             logged_in_user = request.user
             posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
                 (Q(author__profile__followers__in=[logged_in_user.id]) | Q(
-                    author__profile__name=request.user.profile.name)).order_by('-created_on')
+                    author__profile__name=request.user.profile.name)).order_by('-shared_on', '-created_on')
 
         form = PostForm()
         shared_form = SharedForm()
@@ -59,8 +59,8 @@ class PostDetailView(View):
     def get(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=pk)
         form = CommentForm()
-        comments = Comment.objects.filter(post=post).order_by('-created_on')
-        total_comments = Comment.objects.filter(post=post).order_by('-created_on').count()
+        comments = Comment.objects.filter(post=post)
+        total_comments = Comment.objects.filter(post=post).count().order_by('-shared_on', '-created_on')
         context = {
             'post': post,
             'form': form,
@@ -129,7 +129,7 @@ class ProfileView(View):
     def get(self, request, pk, *args, **kwargs):
         profile = UserProfile.objects.get(pk=pk)
         user = profile.user
-        posts = Post.objects.filter(author=user).order_by('-created_on')
+        posts = Post.objects.filter(author=user).order_by('-shared_on', '-created_on')
         followers = profile.followers.all()
 
         is_following = None
@@ -272,7 +272,6 @@ class SharedPostView(View):
 
             for img in original_post.image.all():
                 new_post.image.add(img)
-
             new_post.save()
 
         return redirect('post-list')

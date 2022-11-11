@@ -7,7 +7,7 @@
 <!-- POST FORM   -->
     {% if user.is_authenticated %}
     <div class="row justify-content-center mt-3">
-        <div class="col-md-5 col-sm-12">
+        <div class="col-md-6 col-sm-12">
             <form method="POST" class="mb-3" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
@@ -33,7 +33,22 @@
 
     {% for post in post_list %}
     <div class="row justify-content-center mt-3">
-        <div class="col-md-5 col-sm-12 border-bottom position-relative">
+        <div class="col-md-6 col-sm-12 border-bottom position-relative">
+            {% if post.shared_user %}
+            <div class="">
+                <a href="{% url 'profile' post.shared_user.profile.pk %}">
+                    <img src="{{ post.shared_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                </a>
+                <p><strong>
+                    {% if post.shared_user.is_superuser %}
+                        {{ post.shared_user.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ post.shared_user.profile.name }}
+                    {% endif %}
+                </strong>
+                    <small class="mx-1 text-secondary">shared a post on {{ post.shared_on|date:"M d, Y" }}</small></p>
+            </div>
+            {% else %}
             <div class="">
                 <a href="{% url 'profile' post.author.profile.pk %}">
                     <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
@@ -47,6 +62,42 @@
                 </strong>
                     <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
+            {% endif %}
+            {% if post.shared_user %}
+                <div class="position-relative border-bottom mb-3">
+                    {% if post.shared_body %}
+                    <p>{{ post.shared_body }}</p>
+                    {% endif %}
+                </div>
+                <div class="shared-post" style="margin-left:30px">
+                  <a href="{% url 'profile' post.author.profile.pk %}">
+                        <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    <p><strong>
+                        {% if post.author.is_superuser %}
+                            {{ post.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        {% else%}
+                            {{ post.author.profile.name }}
+                        {% endif %}
+                    </strong>
+                        <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+
+                    <div class="position-relative">
+                        <p>{{ post.body}}</p>
+                         <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
+                        {% if post.image.count > 0 %}
+                            <div class="row">
+                                {% for img in post.image.all %}
+                                    <div class="col-md-6 col xs-10">
+                                        <img src="{{ img.image.url }}" class="post-image">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+
             <div class="position-relative">
                 <p>{{ post.body}}</p>
                  <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
@@ -60,6 +111,7 @@
                     </div>
                 {% endif %}
             </div>
+            {% endif %}
             <div class="d-flex flex-row">
                 <form action="{% url 'add-like' post.pk %}" method="POST">
                     {% csrf_token %}
@@ -100,7 +152,7 @@
                     </i>
                 </button>
             </div>
-            <form action="{% url 'post-detail' post.pk %}" method="POST" class="d-none border-bottom mb-3" id="{{ post.pk }}">
+            <form action="{% url 'shared-post' post.pk %}" method="POST" class="d-none border-bottom mb-3" id="{{ post.pk }}">
                 {% csrf_token %}
                 {{ shared_form|crispy }}
                 <div class="d-grid gap-2">
