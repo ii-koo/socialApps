@@ -41,7 +41,9 @@
                     {% endif %}
                 </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
             </div>
-            <p>{{ post.body}}</p>
+            <div class="body">
+                <p>{{ post.body}}</p>
+            </div>
             <div class="d-flex flex-row">
                 <form action="{% url 'add-like' post.pk %}" method="POST">
                     {% csrf_token %}

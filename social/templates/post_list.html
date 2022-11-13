@@ -83,7 +83,9 @@
                         <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
 
                     <div class="position-relative">
-                        <p>{{ post.body}}</p>
+                        <div class="body">
+                            <p>{{ post.body}}</p>
+                        </div>
                          <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                         {% if post.image.count > 0 %}
                             <div class="row">
