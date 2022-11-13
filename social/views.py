@@ -46,6 +46,7 @@ class PostListView(View):
             new_post = form.save(commit=False)
             new_post.author = request.user
             new_post.save()
+            new_post.create_tags()
 
             for f in files:
                 img = Image(image=f)
@@ -193,6 +194,7 @@ class CommentReplyView(LoginRequiredMixin, View):
             new_comment.post = post
             new_comment.parent = parent_comment
             new_comment.save()
+            new_comment.create_tags()
 
             notification = Notification.objects.create(notification_type=2, from_user=request.user,
                                                        to_user=parent_comment.author, comment=new_comment)

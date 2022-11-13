@@ -64,7 +64,7 @@
             </div>
             {% endif %}
             {% if post.shared_user %}
-                <div class="position-relative border-bottom mb-3">
+                <div class="position-relative border-bottom mb-3 body">
                     {% if post.shared_body %}
                     <p>{{ post.shared_body }}</p>
                     {% endif %}
@@ -101,7 +101,9 @@
             {% else %}
 
             <div class="position-relative">
-                <p>{{ post.body}}</p>
+                <div class="body">
+                    <p>{{ post.body}}</p>
+                </div>
                  <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                 {% if post.image.count > 0 %}
                     <div class="row">
