@@ -1,37 +1,32 @@
 {% extends "layout.html" %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-
 <div class="container">
+    <div class="row mt-3">
+        <div class="col-md-5 col-sm-6">
+            <a href="{% url 'post-list' %}" class="btn remove-default-btn"> Back to Feed</a>
+        </div>
+    </div>
 
-<!-- POST FORM   -->
-    {% if user.is_authenticated %}
     <div class="row justify-content-center mt-3">
-        <div class="col-md-6 col-sm-12">
-            <form method="POST" class="mb-3" enctype="multipart/form-data">
+        <div class="col-md-5 col-sm-12">
+            {% if tag %}
+                <h3>Explore #{{ tag.name }} posts</h3>
+                <p class="mb-3">Most recent posts tagged with {{ tag.name }}</p>
+            {% else %}
+                <h3>Explore posts</h3>
+                <p class="mb-3">Explore tags to find new posts</p>
+            {% endif %}
+
+            <form method="POST" class="mb-5">
                 {% csrf_token %}
                 {{ form|crispy }}
-                <div class="d-grid gap-2">
-                    <button class="btn btn-success">Submit</button>
-                </div>
+                <button type="submit">Search</button>
             </form>
         </div>
     </div>
-    {% else %}
-    <div class="row justify-content-center mt-3">
-        <div class="position-fixed text-center">
-            <div class="alert alert-secondary">
-                You are not login
-                <a href="{% url 'account_login' %}" class="btn btn-lg btn-success">Login</a>
-                or
-                <a href="{% url 'account_signup' %}" class="btn btn-lg btn-light">Sign Up</a>
-            </div>
-        </div>
-    </div>
-    <br><br>
-    {% endif %}
-
-    {% for post in post_list %}
+    {% for post in posts %}
     <div class="row justify-content-center mt-3">
         <div class="col-md-6 col-sm-12 border-bottom position-relative">
             {% if post.shared_user %}
@@ -150,7 +145,7 @@
                         <span class="small">
                             {% if post.shared_user == 0 %}
                             {% else %}
-                            {{ post.shared_user.id }}
+                            {{ post.shared_user.count.all }}
                             {% endif %}
                         </span>
                     </i>
@@ -167,5 +162,4 @@
     </div>
     {% endfor %}
 </div>
-
 {% endblock content %}

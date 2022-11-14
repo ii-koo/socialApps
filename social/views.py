@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q, Count
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from .models import Post, Comment, UserProfile, Notification, ThreadModel, MessangerModel, Image
-from .forms import PostForm, CommentForm, ThreadForm, MessangerForm, SharedForm
+from .models import Post, Comment, UserProfile, Notification, ThreadModel, MessangerModel, Image, Tag
+from .forms import PostForm, CommentForm, ThreadForm, MessangerForm, SharedForm, ExploreForm
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 
@@ -19,7 +19,7 @@ class PostListView(View):
         # if user has no followers, all posts will be displayed
         chk_foll = UserProfile.objects.filter(followers=request.user).count()
         if chk_foll < 1 or chk_foll is None:
-             posts = Post.objects.annotate(number_of_comments=Count('comment_set')).order_by('-shared_on', '-created_on')
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).order_by('-shared_on', '-created_on')
         else:
             logged_in_user = request.user
             posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
@@ -439,3 +439,44 @@ class CreateMessage(View):
         )
 
         return redirect('thread', pk=pk)
+
+
+class ExploreTags(View):
+    def get(self, request, *args, **kwargs):
+        query = self.request.GET.get('query')
+        tag = Tag.objects.filter(name=query).first()
+        form = ExploreForm()
+        if tag:
+            posts = Post.objects.filter(tags__in=[tag])
+        else:
+             posts = Post.objects.all()
+
+        context = {
+            'tag': tag,
+            'form': form,
+            'posts': posts,
+        }
+
+        return render(request, 'explore.html', context)
+
+    # def post(self, request, *args, **kwargs):
+    #     form = ExploreForm(request.POST)
+    #     if form.is_valid():
+    #         query = form.cleaned_data['query']
+    #         tag = Tag.objects.filter(name=query).first()
+    #
+    #         posts = None
+    #         if tag:
+    #             posts = Post.objects.filter(tags__id__in=[tag])
+    #         if posts:
+    #             context = {
+    #                 'tag': tag,
+    #                 'posts': posts,
+    #             }
+    #         else:
+    #             context = {
+    #                 'tag': tag,
+    #             }
+    #
+    #         return render( request,'explore.html', context)
+    #     return redirect('explore')

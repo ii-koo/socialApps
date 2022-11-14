@@ -60,3 +60,14 @@ class SharedForm(forms.Form):
             'style': 'resize:none',
         }))
 
+
+class ExploreForm(forms.Form):
+    query = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Explore tags',
+                'class': 'form-control',
+            }
+        )
+    )

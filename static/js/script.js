@@ -45,10 +45,9 @@ function formatTags(){
 
         for (let j=0; j < words.length; j++){
             if(words[j][0] == '#'){
-                let replacedText = bodyText.replace(/\s\#(.*?)(\s|$)/g,' <a href="">'+words[j]+'</a> ');
+                let replacedText = bodyText.replace(/\s\#(.*?)(\s|$)/g,' <a href="/social/explore/?query='+words[j].substring(1)+'">'+words[j]+'</a> ');
                 elements[i].innerHTML = replacedText;
-                console.log(words[j]);
-//                console.log(replacedText);
+//                alert(replacedText);
             }
         }
     }

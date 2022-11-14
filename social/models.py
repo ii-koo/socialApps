@@ -15,16 +15,16 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     shared_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='+')
     likes = models.ManyToManyField(User, blank=True, related_name='likes')
-    tags = models.ManyToManyField('Tags', blank=True)
+    tags = models.ManyToManyField('Tag', blank=True)
 
     def create_tags(self):
         for word in self.body.split():
             if word[0] == '#':
-                tag = Tags.objects.filter(name=word[1:]).first()
+                tag = Tag.objects.filter(name=word[1:]).first()
                 if tag:
                     self.tags.add(tag.pk)
                 else:
-                    tag = Tags(name=word[1])
+                    tag = Tag(name=word[1:])
                     tag.save()
                     self.tags.add(tag.pk)
 
@@ -33,11 +33,11 @@ class Post(models.Model):
         if self.shared_body:
             for word in self.shared_body.split():
                 if word[0] == '#':
-                    tag = Tags.objects.filter(name=word[1:]).first()
+                    tag = Tag.objects.filter(name=word[1:]).first()
                     if tag:
                         self.tags.add(tag.pk)
                     else:
-                        tag = Tags(name=word[1])
+                        tag = Tag(name=word[1:])
                         tag.save()
                         self.tags.add(tag.pk)
 
@@ -54,16 +54,16 @@ class Comment(models.Model):
     post = models.ForeignKey('Post', related_name="comment_set", on_delete=models.CASCADE)
     likes = models.ManyToManyField(User, blank=True, related_name='comment_likes')
     parent = models.ForeignKey('self', blank=True, on_delete=models.CASCADE, null=True, related_name='+')
-    tags = models.ManyToManyField('Tags', blank=True)
+    tags = models.ManyToManyField('Tag', blank=True)
 
     def create_tags(self):
         for word in self.body.split():
             if word[0] == '#':
-                tag = Tags.objects.filter(name=word[1:]).first()
+                tag = Tag.objects.filter(name=word[1:]).first()
                 if tag:
                     self.tags.add(tag.pk)
                 else:
-                    tag = Tags(name=word[1])
+                    tag = Tag(name=word[1])
                     tag.save()
                     self.tags.add(tag.pk)
 
@@ -72,11 +72,11 @@ class Comment(models.Model):
         if self.shared_body:
             for word in self.shared_body.split():
                 if word[0] == '#':
-                    tag = Tags.objects.filter(name=word[1:]).first()
+                    tag = Tag.objects.filter(name=word[1:]).first()
                     if tag:
                         self.tags.add(tag.pk)
                     else:
-                        tag = Tags(name=word[1])
+                        tag = Tag(name=word[1])
                         tag.save()
                         self.tags.add(tag.pk)
 
@@ -147,6 +147,6 @@ class Image(models.Model):
     image = models.ImageField(upload_to='uploads/post_pictures', blank=True, null=True)
 
 
-class Tags(models.Model):
+class Tag(models.Model):
     name = models.CharField(max_length=255)
 

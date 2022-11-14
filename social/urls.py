@@ -3,7 +3,8 @@ from .views import PostListView, PostDetailView, PostEditView, PostDeleteView, C
     ProfileView, ProfileViewEdit, AddFollower, RemoveFollower, ListFollower,\
     AddLike, AddCommentLike, CommentReplyView, SharedPostView,\
     UserSearchView, PostNotification, FollowNotification,\
-    NotificationListsView, ThreadNotification, ListThread, CreateThread, ThreadView, CreateMessage
+    NotificationListsView, ThreadNotification, ListThread, CreateThread, ThreadView, CreateMessage,\
+    ExploreTags
 
 urlpatterns = [
     path('', PostListView.as_view(), name='post-list'),
@@ -35,5 +36,7 @@ urlpatterns = [
     path('inbox/<int:pk>', ThreadView.as_view(), name='thread'),
     path('inbox/create-thread/', CreateThread.as_view(), name='create-thread'),
     path('inbox/<int:pk>/create-message/', CreateMessage.as_view(), name='create-message'),
+
+    path('explore/', ExploreTags.as_view(), name='explore')
 
 ]

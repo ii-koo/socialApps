@@ -16,7 +16,28 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'post-list' %}">Home</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'post-list' %}">
+          <i class="fa fa-home"></i>
+            Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'notification-lists' request.user.profile.pk %}">
+          <i class="fa fa-circle-exclamation"></i>
+            Notifications
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'inbox' %}">
+          <i class="fa fa-comments"></i>
+            Message
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="">
+          <i class="fa fa-tags"></i>
+            #Tags
+          </a>
         </li>
         {% endif %}
         <form class="d-flex" role="search" method="GET" action="{% url 'profile-search' %}">
