@@ -459,24 +459,24 @@ class ExploreTags(View):
 
         return render(request, 'explore.html', context)
 
-    # def post(self, request, *args, **kwargs):
-    #     form = ExploreForm(request.POST)
-    #     if form.is_valid():
-    #         query = form.cleaned_data['query']
-    #         tag = Tag.objects.filter(name=query).first()
-    #
-    #         posts = None
-    #         if tag:
-    #             posts = Post.objects.filter(tags__id__in=[tag])
-    #         if posts:
-    #             context = {
-    #                 'tag': tag,
-    #                 'posts': posts,
-    #             }
-    #         else:
-    #             context = {
-    #                 'tag': tag,
-    #             }
-    #
-    #         return render( request,'explore.html', context)
-    #     return redirect('explore')
+    def post(self, request, *args, **kwargs):
+        form = ExploreForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            tag = Tag.objects.filter(name=query).first()
+
+            posts = None
+            if tag:
+                posts = Post.objects.filter(tags__in=[tag])
+            if posts:
+                context = {
+                    'tag': tag,
+                    'posts': posts,
+                }
+            else:
+                context = {
+                    'tag': tag,
+                }
+
+            return HttpResponseRedirect(f'/social/explore?query={query}')
+        return HttpResponseRedirect('/social/explore')
