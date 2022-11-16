@@ -132,7 +132,9 @@ class ProfileView(View):
     def get(self, request, pk, *args, **kwargs):
         profile = UserProfile.objects.get(pk=pk)
         user = profile.user
-        posts = Post.objects.filter(author=user).order_by('-shared_on', '-created_on')
+        form = SharedForm()
+        posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
+            (Q(author=user) | Q(shared_user=True)).order_by('-shared_on', '-created_on')
         followers = profile.followers.all()
 
         is_following = None
@@ -152,6 +154,7 @@ class ProfileView(View):
         context = {
             'user': user,
             'profile': profile,
+            'shared_form': form,
             'posts': posts,
             'number_of_followers': number_of_followers,
             'is_following': is_following,
@@ -445,14 +448,21 @@ class ExploreTags(View):
         query = self.request.GET.get('query')
         tag = Tag.objects.filter(name=query).first()
         form = ExploreForm()
+        shared_form = SharedForm()
         if tag:
-            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter(tags__in=[tag])
+            # posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter(tags__in=[tag])
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
+                (Q(author__profile__name=request.user.profile.name) | Q(
+                    shared_user=True
+                ), tags__in=[tag]).order_by('-shared_on', '-created_on')
+
         else:
-             posts = Post.objects.all()
+             posts = Post.objects.annotate(number_of_comments=Count('comment_set')).order_by('-shared_on', '-created_on')
 
         context = {
             'tag': tag,
             'form': form,
+            'shared_form': shared_form,
             'posts': posts,
         }
 

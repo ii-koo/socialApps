@@ -109,7 +109,7 @@
             </div>
             {% endif %}
             <div class="d-flex flex-row">
-                <form action="{% url 'add-like' post.pk %}" method="POST">
+                <form action="{% url 'add-like' post.pk %}" method="POST" class="mt-2">
                     {% csrf_token %}
                     <input type="hidden" value="{{ request.path }}" name="next">
                     <button type="submit" class="btn btn-sm remove-default-btn">
@@ -123,13 +123,13 @@
                         </i>
                     </button>
                 </form>
-                 <form action="{% url 'post-detail' post.pk %}" method="POST">
+                 <form action="{% url 'post-detail' post.pk %}" method="POST" class="mt-2">
                     {% csrf_token %}
                     <input type="hidden" value="{{ request.path }}" name="next">
                     <button class="btn btn-sm remove-default-btn px-3">
                             <i class="fa fa-comment">
                                 <span class="small">
-                                    {{ total_comment }}
+                                    {{ total_comments }}
                                 </span>
                             </i>
                     </button>
@@ -188,14 +188,14 @@
                         onclick="commentReplyToggle( '{{ comment.pk }}' )">
                     <i class="fa fa-reply"></i>
                 </button>
+                {% if request.user == post.author or request.user == comment.author %}
+                    <div class="small mt-1 mx-2">
+                        <a class="text-decoration-none text-dark" href="{% url 'comment-delete' post.pk comment.pk %}" >
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-            {% if request.user == post.author or request.user == comment.author %}
-                <div class="small mb-1">
-                    <a class="text-decoration-none text-dark" href="{% url 'comment-delete' post.pk comment.pk %}" >
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </div>
-            {% endif %}
         </div>
         <div class="row justify-content-center mt-3 d-none" id="{{ comment.pk }}">
             <div class="col-md-5 col-sm-12 mb-4">

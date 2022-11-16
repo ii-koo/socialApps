@@ -58,8 +58,7 @@
                 <p><a href="{% url 'followers-list' profile.pk %}" class="text-decoration-none">
                     Followers</a> : {{ number_of_followers }}
                 </p>
-                {% if user == request.user %}
-                {% else %}
+                {% if user != request.user %}
                     {% if is_following %}
                     <form action="{% url 'remove-follower' profile.pk %}" method="POST">
                         {% csrf_token %}
@@ -94,37 +93,95 @@
     {% endif %}
 
     {% for post in posts %}
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center mt-4">
         <div class="col-md-5 col-sm-12 border-bottom position-relative">
-            <div class="">
-                <a href="{% url 'profile' post.author.profile.pk %}">
-                    <img src="{{ post.author.profile.picture.url }}" width="25px" height="25px" class="rounded-circle post-img">
+            {% if post.shared_user %}
+            <div class="mb-3">
+                <a href="{% url 'profile' post.shared_user.profile.pk %}">
+                    <img src="{{ post.shared_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                 </a>
-                <p><strong>{{ post.author.profile.name }}</strong>
-                    <small class="text-secondary mx-1">
-                        {{ post.created_on|date:"M d, Y" }}
-                    </small>
-                </p>
+                <p><strong>
+                    {% if post.shared_user.is_superuser %}
+                        {{ post.shared_user.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ post.shared_user.profile.name }}
+                    {% endif %}
+                </strong>
+                    <small class="mx-1 text-secondary">shared a post on {{ post.shared_on|date:"M d, Y" }}</small></p>
             </div>
-            <div class="position-relative">
-                {% if post.image.count > 0 %}
-                    {% for img in post.image.all %}
-                        <div class="col-md-4 col xs-12">
-                            <img src="{{ img.image.url }}" class="post-image">
+            {% else %}
+            <div class="mb-3">
+                <a href="{% url 'profile' post.author.profile.pk %}">
+                    <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                </a>
+                <p><strong>
+                    {% if post.author.is_superuser %}
+                        {{ post.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                    {% else%}
+                        {{ post.author.profile.name }}
+                    {% endif %}
+                </strong>
+                    <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+            </div>
+            {% endif %}
+            {% if post.shared_user %}
+                <div class="position-relative border-bottom mb-3 body">
+                    {% if post.shared_body %}
+                    <p>{{ post.shared_body }}</p>
+                    {% endif %}
+                </div>
+                <div class="shared-post" style="margin-left:30px">
+                  <a href="{% url 'profile' post.author.profile.pk %}">
+                        <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
+                    </a>
+                    <p><strong>
+                        {% if post.author.is_superuser %}
+                            {{ post.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
+                        {% else%}
+                            {{ post.author.profile.name }}
+                        {% endif %}
+                    </strong>
+                        <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+
+                    <div class="position-relative">
+                        <div class="body">
+                            <p>{{ post.body}}</p>
                         </div>
-                    {% endfor %}
-                {% endif %}
+                         <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
+                        {% if post.image.count > 0 %}
+                            <div class="row">
+                                {% for img in post.image.all %}
+                                    <div class="col-md-6 col xs-10">
+                                        <img src="{{ img.image.url }}" class="post-image">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+
+            <div class="position-relative">
                 <div class="body">
                     <p>{{ post.body}}</p>
                 </div>
-                <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
+                 <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
+                {% if post.image.count > 0 %}
+                    <div class="row">
+                        {% for img in post.image.all %}
+                            <div class="col-md-6 col xs-10">
+                                <img src="{{ img.image.url }}" class="post-image">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+            {% endif %}
             <div class="d-flex flex-row">
-                <form action="{% url 'add-like' post.pk %}" method="POST">
+                <form action="{% url 'add-like' post.pk %}" method="POST" class="mt-1">
                     {% csrf_token %}
                     <input type="hidden" value="{{ request.path }}" name="next">
-                    <button type="submit" class="btn btn-sm"
-                            style="border:none; box-shadow:none; background-color:transparent">
+                    <button type="submit" class="btn btn-sm remove-default-btn">
                         <i class="fa fa-thumbs-up">
                             <span class="small">
                                 {% if post.likes.all.count == 0 %}
@@ -135,7 +192,34 @@
                         </i>
                     </button>
                 </form>
+                 <form action="{% url 'post-detail' post.pk %}" method="POST" class="mt-1">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ request.path }}" name="next">
+                    <button class="btn btn-sm remove-default-btn px-3">
+                            <i class="fa fa-comment">
+                                <span class="small">
+                                    {% if post.number_of_comments == 0 %}
+                                {% else %}
+                                    {{ post.number_of_comments }}
+                                {% endif %}
+                                </span>
+                            </i>
+                    </button>
+                 </form>
+                <button class="btn btn-sm remove-default-btn px-3 mt-1" onclick="sharedToggle('{{ post.pk }}')">
+                    <i class="fa fa-share">
+                        <span class="small">
+                        </span>
+                    </i>
+                </button>
             </div>
+            <form action="{% url 'shared-post' post.pk %}" method="POST" class="d-none border-bottom mb-3" id="{{ post.pk }}">
+                {% csrf_token %}
+                {{ shared_form|crispy }}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">Share the Post</button>
+                </div>
+            </form>
         </div>
     </div>
     {% endfor %}
