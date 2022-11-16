@@ -46,7 +46,7 @@
                         {{ post.shared_user.profile.name }}
                     {% endif %}
                 </strong>
-                    <small class="mx-1 text-secondary">shared a post on {{ post.shared_on|timesince }}</small></p>
+                    <small class="mx-1 text-secondary">shared a post on {{ post.shared_on|timesince }} ago</small></p>
             </div>
             {% else %}
             <div class="mb-3">
@@ -60,7 +60,7 @@
                         {{ post.author.profile.name }}
                     {% endif %}
                 </strong>
-                    <small class="mx-1 text-secondary">{{ post.created_on| timesince }}</small></p>
+                    <small class="mx-1 text-secondary">{{ post.created_on| timesince }} ago</small></p>
             </div>
             {% endif %}
             {% if post.shared_user %}
@@ -80,19 +80,25 @@
                             {{ post.author.profile.name }}
                         {% endif %}
                     </strong>
-                        <small class="mx-1 text-secondary">{{ post.created_on| timesince }}</small></p>
+                        <small class="mx-1 text-secondary">{{ post.created_on| timesince }} ago</small></p>
 
                     <div class="position-relative">
                         <div class="body">
                             <p>{{ post.body}}</p>
                         </div>
                          <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
-                        {% if post.image.count > 0 %}
+                        {% if post.image.count > 1 %}
                             <div class="row">
                                 {% for img in post.image.all %}
                                     <div class="col-md-6 col xs-10">
                                         <img src="{{ img.image.url }}" class="post-image">
                                     </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                {% for img in post.image.all %}
+                                        <img src="{{ img.image.url }}" class="post-image">
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -105,12 +111,18 @@
                     <p>{{ post.body}}</p>
                 </div>
                  <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
-                {% if post.image.count > 0 %}
+                {% if post.image.count > 1 %}
                     <div class="row">
                         {% for img in post.image.all %}
                             <div class="col-md-6 col xs-10">
                                 <img src="{{ img.image.url }}" class="post-image">
                             </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="row">
+                        {% for img in post.image.all %}
+                            <img src="{{ img.image.url }}" class="post-image">
                         {% endfor %}
                     </div>
                 {% endif %}

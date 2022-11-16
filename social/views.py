@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views import View
 from django.utils import timezone
 from django.contrib import messages
@@ -8,7 +8,7 @@ from django.db.models import Q, Count
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import Post, Comment, UserProfile, Notification, ThreadModel, MessangerModel, Image, Tag
 from .forms import PostForm, CommentForm, ThreadForm, MessangerForm, SharedForm, ExploreForm
-from django.views.generic import UpdateView, DeleteView
+from django.views.generic import UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 
 
@@ -344,15 +344,31 @@ class ThreadNotification(LoginRequiredMixin, View):
         return redirect('thread', pk=object_pk)
 
 
-class NotificationListsView(LoginRequiredMixin, View):
-    def get(self, request, pk, *args, **kwargs):
-        notifications = Notification.objects.filter(to_user=pk).order_by('-date')
+class RemoveNotification(View):
+    def delete(self, request, notification_pk, *args, **kwargs):
+        notification = Notification.objects.get(pk=notification_pk)
 
-        context = {
-            'notifications': notifications
-        }
+        notification.user_has_seen = True
+        notification.save()
 
-        return render(request, 'notification_lists.html', context)
+        return HttpResponse('success', content_type='text/plain')
+
+
+class NotificationListsView(LoginRequiredMixin, ListView):
+    model = Notification
+    template_name = 'notification_lists.html'
+    context_object_name = 'notifications'
+    ordering = '-date'
+    paginate_by = 5
+    # def get(self, request, pk, *args, **kwargs):
+    #     notifications = Notification.objects.filter(to_user=pk).order_by('-date')
+    #     paginate_by = 2
+    #
+    #     context = {
+    #         'notifications': notifications
+    #     }
+    #
+    #     return render(request, 'notification_lists.html', context)
 
 
 class ListThread(LoginRequiredMixin, View):

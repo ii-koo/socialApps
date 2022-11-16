@@ -21,7 +21,7 @@
                        class="text-decoration-none">
                         liked your post.
                     </a>
-                    on {{ notification.date|date:"F, d y" }}
+                    on {{ notification.date|date:"F d, Y" }}
                 </p>
                 {% elif notification.notification_type == 2 %}
                 <p>
@@ -33,7 +33,7 @@
                        class="text-decoration-none">
                         commented your post.
                     </a>
-                    on {{ notification.date|date:"F, d y" }}
+                    on {{ notification.date|date:"F d, Y" }}
                 </p>
                 {% endif %}
             {% elif notification.comment %}
@@ -47,7 +47,7 @@
                        class="text-decoration-none">
                         liked your comment.
                     </a>
-                    on {{ notification.date|date:"F, d y" }}
+                    on {{ notification.date|date:"F d, Y" }}
                 </p>
                 {% elif notification.notification_type == 2 %}
                 <p>
@@ -59,7 +59,7 @@
                        class="text-decoration-none">
                         replied your comment.
                     </a>
-                    on {{ notification.date|date:"F, d y" }}
+                    on {{ notification.date|date:"F d, Y" }}
                 </p>
                 {% endif %}
             {% elif notification.thread %}
@@ -72,7 +72,7 @@
                        class="text-decoration-none">
                         sent you a message.
                     </a>
-                    on {{ notification.date|date:"F, d y" }}
+                    on {{ notification.date|date:"F d, Y" }}
                 </p>
             {% else %}
                 <p>
@@ -84,12 +84,37 @@
                        class="text-decoration-none">
                         has started following you.
                     </a>
-                    on {{ notification.date|date:"F, d y" }}
+                    on {{ notification.date|date:"F d, Y" }}
                 </p>
             {% endif %}
         </div>
     </div>
     {% endfor %}
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12">
+            {% if is_paginated %}
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="btn btn-outline-success">First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-success">Previous</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a href="?page={{ num }}" class="btn btn-success">{{ num }}</a>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}" class="btn btn-outline-success">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-success">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-success">Last</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
 </div>
 
 {% endblock content %}
