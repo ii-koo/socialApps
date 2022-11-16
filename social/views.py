@@ -194,7 +194,6 @@ class CommentReplyView(LoginRequiredMixin, View):
             new_comment.post = post
             new_comment.parent = parent_comment
             new_comment.save()
-            new_comment.create_tags()
 
             notification = Notification.objects.create(notification_type=2, from_user=request.user,
                                                        to_user=parent_comment.author, comment=new_comment)
@@ -273,7 +272,7 @@ class SharedPostView(View):
             )
 
             new_post.save()
-
+            new_post.create_tags()
             for img in original_post.image.all():
                 new_post.image.add(img)
             new_post.save()
@@ -447,7 +446,7 @@ class ExploreTags(View):
         tag = Tag.objects.filter(name=query).first()
         form = ExploreForm()
         if tag:
-            posts = Post.objects.filter(tags__in=[tag])
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter(tags__in=[tag])
         else:
              posts = Post.objects.all()
 

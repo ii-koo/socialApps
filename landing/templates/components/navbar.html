@@ -18,31 +18,31 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'post-list' %}">
           <i class="fa fa-home"></i>
-            Home
+            <small>Home</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'notification-lists' request.user.profile.pk %}">
           <i class="fa fa-circle-exclamation"></i>
-            Notifications
+            <small>Notifications</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'inbox' %}">
           <i class="fa fa-comments"></i>
-            Message
+            <small>Message</small>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="">
+          <a class="nav-link active" aria-current="page" href="{% url 'explore' %}">
           <i class="fa fa-tags"></i>
-            #Tags
+           <small>Notifications</small>
           </a>
         </li>
         {% endif %}
         <form class="d-flex" role="search" method="GET" action="{% url 'profile-search' %}">
         <div class="input-group">
-          <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="query" value="{{ request.GET.query }}">
+          <input class="form-control" type="search" placeholder="Search User" aria-label="Search" name="query" value="{{ request.GET.query }}">
             <button class="btn btn-outline-success" type="submit">
               <i class="fa fa-magnifying-glass"></i>
             </button>
