@@ -38,7 +38,7 @@
                         {{ post.shared_user.profile.name }}
                     {% endif %}
                 </strong>
-                    <small class="mx-1 text-secondary">shared a post on {{ post.shared_on|date:"M d, Y" }}</small></p>
+                    <small class="mx-1 text-secondary">shared a post on {{ post.shared_on|timesince }}</small></p>
             </div>
             {% else %}
             <div class="">
@@ -52,7 +52,7 @@
                         {{ post.author.profile.name }}
                     {% endif %}
                 </strong>
-                    <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+                    <small class="mx-1 text-secondary">{{ post.created_on|timesince }}</small></p>
             </div>
             {% endif %}
             {% if post.shared_user %}
@@ -72,13 +72,12 @@
                             {{ post.author.profile.name }}
                         {% endif %}
                     </strong>
-                        <small class="mx-1 text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+                        <small class="mx-1 text-secondary">{{ post.created_on|timesince }}</small></p>
 
                     <div class="position-relative">
                         <div class="body">
                             <p>{{ post.body}}</p>
                         </div>
-                         <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                         {% if post.image.count > 0 %}
                             <div class="row">
                                 {% for img in post.image.all %}
@@ -96,7 +95,6 @@
                 <div class="body">
                     <p>{{ post.body}}</p>
                 </div>
-                 <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                 {% if post.image.count > 0 %}
                     <div class="row">
                         {% for img in post.image.all %}
@@ -165,7 +163,7 @@
                     {% else%}
                         {{ comment.author.profile.name }}
                     {% endif %}
-                </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+                </strong> <small class="text-secondary">{{ post.created_on|timesince }}</small></p>
             </div>
             <p>{{ comment.comment }}</p>
             <div class="d-flex flex-row mb-1">
@@ -223,7 +221,7 @@
                     {% else%}
                         {{ child_comment.author.profile.name }}
                     {% endif %}
-                </strong> <small class="text-secondary">{{ post.created_on|date:"M d, Y" }}</small></p>
+                </strong> <small class="text-secondary">{{ post.created_on|timesince }}</small></p>
             </div>
             <p>{{ child_comment.comment }}</p>
             <a class="text-decoration-none text-dark" href="{% url 'comment-delete' post.pk child_comment.pk %}" >

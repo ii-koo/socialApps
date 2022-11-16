@@ -6,9 +6,15 @@
     <div class="row justify-content-center">
         <div class="card col-md-6 mt-3 p-3 shadow-sm">
             {% if thread.receiver == request.user %}
-                <h5>@{{ thread.user }}</h5>
+                <a href="{% url 'profile' thread.user.profile.pk %}" class="text-decoration-none text-dark">
+                    <img src="{{ thread.user.profile.picture.url }}" width="50" height="50" class="rounded-circle post-img">
+                     <p class="mt-3">{{ thread.user.profile.name }}</p>
+                </a>
             {% else %}
-                <h5>@{{ thread.receiver }}</h5>
+                <a href="{% url 'profile' thread.receiver.profile.pk %}" class="text-decoration-none text-dark">
+                    <img src="{{ thread.receiver.profile.picture.url }}" width="50" height="50" class="rounded-circle post-img">
+                <p class="mt-3">{{ thread.receiver.profile.name }}</p>
+                </a>
             {% endif %}
         </div>
     </div>

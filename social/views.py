@@ -283,7 +283,7 @@ class SharedPostView(View):
         return redirect('post-list')
 
 
-class UserSearchView(View):
+class UserSearchView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('query')
         profile_list = UserProfile.objects.filter(
@@ -298,7 +298,7 @@ class UserSearchView(View):
         return render(request, 'user_search.html', context)
 
 
-class ListFollower(View):
+class ListFollower(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         profile = UserProfile.objects.get(pk=pk)
         followers = profile.followers.all()
@@ -311,7 +311,7 @@ class ListFollower(View):
         return render(request, 'followers_list.html', context)
 
 
-class PostNotification(View):
+class PostNotification(LoginRequiredMixin, View):
     def get(self, request, notification_pk, post_pk, *args, **kwargs):
         notification = Notification.objects.get(pk=notification_pk)
         post = Post.objects.get(pk=post_pk)
@@ -322,7 +322,7 @@ class PostNotification(View):
         return redirect('post-detail', pk=post_pk)
 
 
-class FollowNotification(View):
+class FollowNotification(LoginRequiredMixin, View):
     def get(self, request, notification_pk, profile_pk, *args, **kwargs):
         notification = Notification.objects.get(pk=notification_pk)
         profile = UserProfile.objects.get(pk=profile_pk)
@@ -333,7 +333,7 @@ class FollowNotification(View):
         return redirect('profile', pk=profile_pk)
 
 
-class ThreadNotification(View):
+class ThreadNotification(LoginRequiredMixin, View):
     def get(self, request, notification_pk, object_pk, *args, **kwargs):
         notification = Notification.objects.get(pk=notification_pk)
         thread = ThreadModel.objects.get(pk=object_pk)
@@ -355,7 +355,7 @@ class NotificationListsView(LoginRequiredMixin, View):
         return render(request, 'notification_lists.html', context)
 
 
-class ListThread(View):
+class ListThread(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         threads = ThreadModel.objects.filter(Q(user=request.user) | Q(receiver=request.user))
         context = {
@@ -365,7 +365,7 @@ class ListThread(View):
         return render(request, 'inbox.html', context)
 
 
-class CreateThread(View):
+class CreateThread(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = ThreadForm()
 
@@ -402,7 +402,7 @@ class CreateThread(View):
             return redirect('create-thread')
 
 
-class ThreadView(View):
+class ThreadView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         form = MessangerForm()
         thread = ThreadModel.objects.get(pk=pk)
@@ -417,7 +417,7 @@ class ThreadView(View):
         return render(request, 'thread.html', context)
 
 
-class CreateMessage(View):
+class CreateMessage(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         form = MessangerForm(request.POST, request.FILES)
         thread = ThreadModel.objects.get(pk=pk)
@@ -443,18 +443,19 @@ class CreateMessage(View):
         return redirect('thread', pk=pk)
 
 
-class ExploreTags(View):
+class ExploreTags(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('query')
         tag = Tag.objects.filter(name=query).first()
         form = ExploreForm()
         shared_form = SharedForm()
         if tag:
-            # posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter(tags__in=[tag])
-            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
-                (Q(author__profile__name=request.user.profile.name) | Q(
-                    shared_user=True
-                ), tags__in=[tag]).order_by('-shared_on', '-created_on')
+            posts = Post.objects.annotate(number_of_comments=Count('comment_set')).\
+                filter(tags__in=[tag]).order_by('-shared_on', '-created_on')
+            # posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
+            #     (Q(author__profile__name=request.user.profile.name) | Q(
+            #         shared_user=True
+            #     ), tags__in=[tag]).order_by('-shared_on', '-created_on')
 
         else:
              posts = Post.objects.annotate(number_of_comments=Count('comment_set')).order_by('-shared_on', '-created_on')
@@ -476,7 +477,8 @@ class ExploreTags(View):
 
             posts = None
             if tag:
-                posts = Post.objects.filter(tags__in=[tag])
+                posts = Post.objects.annotate(number_of_comments=Count('comment_set'))\
+                    .filter(tags__in=[tag]).order_by('-shared_on', '-created_on')
             if posts:
                 context = {
                     'tag': tag,
