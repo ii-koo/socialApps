@@ -149,7 +149,13 @@
 
                     <div class="position-relative">
                         <div class="body">
-                            <p>{{ post.body}}</p>
+                            {% if post.body|length > 128 %}
+                                <p>{{ post.body | truncatechars:128 }}
+                                    <span class="text-secondary">read more</span>
+                                </p>
+                            {% else %}
+                                <p>{{ post.body | truncatechars:128 }}</p>
+                            {% endif %}
                         </div>
                          <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                         {% if post.image.count > 0 %}
@@ -167,7 +173,13 @@
 
             <div class="position-relative">
                 <div class="body">
-                    <p>{{ post.body}}</p>
+                    {% if post.body|length > 128 %}
+                    <p>{{ post.body | truncatechars:128 }}
+                        <span class="text-secondary">read more</span>
+                    </p>
+                    {% else %}
+                        <p>{{ post.body | truncatechars:128 }}</p>
+                    {% endif %}
                 </div>
                  <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                 {% if post.image.count > 0 %}
