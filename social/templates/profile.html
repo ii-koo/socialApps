@@ -58,23 +58,27 @@
                 <p><a href="{% url 'followers-list' profile.pk %}" class="text-decoration-none">
                     Followers</a> : {{ number_of_followers }}
                 </p>
-                {% if user != request.user %}
-                    {% if is_following %}
-                    <form action="{% url 'remove-follower' profile.pk %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="fa fa-user-xmark"></i>
-                        </button>
-                    </form>
-                    {% else %}
-                    <form action="{% url 'add-follower' profile.pk %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-success">
-                            <i class="fa fa-user-check"></i>
-                        </button>
-                    </form>
+                <div class="row justify-content-between">
+                    <div class="col-lg-1">
+                                            {% if user != request.user %}
+                        {% if is_following %}
+                        <form action="{% url 'remove-follower' profile.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fa fa-user-xmark"></i>
+                            </button>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'add-follower' profile.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                <i class="fa fa-user-check"></i>
+                            </button>
+                        </form>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

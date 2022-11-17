@@ -12,12 +12,17 @@ from django.views.generic import UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 
 
+def handle_not_found(request, exception):
+    return render(request, 'error.html')
+
+
 # Create your views here.
-class PostListView(View):
+class PostListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
-        # if user has no followers, all posts will be displayed
+        # chek followers if exists
         chk_foll = UserProfile.objects.filter(followers=request.user).count()
+        # if user has no followers, all posts will be displayed
         if chk_foll < 1 or chk_foll is None:
             posts = Post.objects.annotate(number_of_comments=Count('comment_set')).order_by('-shared_on', '-created_on')
         else:
@@ -360,15 +365,6 @@ class NotificationListsView(LoginRequiredMixin, ListView):
     context_object_name = 'notifications'
     ordering = '-date'
     paginate_by = 5
-    # def get(self, request, pk, *args, **kwargs):
-    #     notifications = Notification.objects.filter(to_user=pk).order_by('-date')
-    #     paginate_by = 2
-    #
-    #     context = {
-    #         'notifications': notifications
-    #     }
-    #
-    #     return render(request, 'notification_lists.html', context)
 
 
 class ListThread(LoginRequiredMixin, View):
@@ -414,7 +410,7 @@ class CreateThread(LoginRequiredMixin, View):
 
                 return redirect('thread', pk=thread.pk)
         except:
-            messages.error(request, 'Invalid Username.')
+            messages.success(request, f'Invalid Username.')
             return redirect('create-thread')
 
 

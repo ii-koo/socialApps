@@ -84,13 +84,19 @@
 
                     <div class="position-relative">
                         <div class="body">
-                            <p>{{ post.body}}</p>
+                            {% if post.body|length > 128 %}
+                                <p>{{ post.body | truncatechars:128 }}
+                                    <span class="text-secondary">read more</span>
+                                </p>
+                            {% else %}
+                                <p>{{ post.body | truncatechars:128 }}</p>
+                            {% endif %}
                         </div>
                          <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                         {% if post.image.count > 1 %}
                             <div class="row">
                                 {% for img in post.image.all %}
-                                    <div class="col-md-6 col xs-10">
+                                    <div class="col-md-6 p-1">
                                         <img src="{{ img.image.url }}" class="post-image">
                                     </div>
                                 {% endfor %}
@@ -108,13 +114,17 @@
 
             <div class="position-relative">
                 <div class="body">
-                    <p>{{ post.body}}</p>
+                    {% if post.body|length > 128 %}
+                        <p>{{ post.body | truncatechars:128 }} <span class="text-secondary">read more</span></p>
+                    {% else %}
+                        <p>{{ post.body | truncatechars:128 }}</p>
+                    {% endif %}
                 </div>
                  <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
                 {% if post.image.count > 1 %}
                     <div class="row">
                         {% for img in post.image.all %}
-                            <div class="col-md-6 col xs-10">
+                            <div class="col-md-6 p-1">
                                 <img src="{{ img.image.url }}" class="post-image">
                             </div>
                         {% endfor %}

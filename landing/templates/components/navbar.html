@@ -60,7 +60,9 @@
               <li><a class="dropdown-item" href="{% url 'profile' request.user.profile.pk %}">Account</a></li>
               <li><a class="dropdown-item" href="{% url 'notification-lists' request.user.profile.pk %}">Notifications</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>
+<!--              <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>-->
+              <li><a class="dropdown-item" data-bs-toggle="modal"
+                        data-bs-target="#LogOutModal">Log Out</a></li>
             </ul>
           </li>
           <li>
@@ -78,3 +80,25 @@
     </div>
   </div>
 </nav>
+
+<!-- Modal -->
+<div class="modal fade" id="LogOutModal" tabindex="-1" aria-labelledby="LogOutModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="LogOutModalLabel">Sign Out</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to sign out?</p>
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+          {% endif %}
+          <button type="submit" class="btn btn-outline-danger">Sign Out Now</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

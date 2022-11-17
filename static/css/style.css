@@ -135,3 +135,10 @@
 .body a{
    text-decoration:none;
 }
+
+.btn-file {
+    border: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}

@@ -15,8 +15,8 @@ class PostForm(forms.ModelForm):
     image = forms.ImageField(required=False,
                              widget=forms.ClearableFileInput(attrs={
                                  'multiple': True,
-                             })
-                             )
+                                 'class': 'btn-file',
+                             }))
 
     class Meta:
         model = Post
