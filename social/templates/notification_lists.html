@@ -55,7 +55,7 @@
                         <img src="{{ notification.from_user.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                     </a>
                     {{ notification.from_user.profile.name }}
-                    <a href="{% url 'post-notification' notification.pk notification.profile.pk %}"
+                    <a href="{% url 'post-notification' notification.pk notification.comment.post.pk %}"
                        class="text-decoration-none">
                         replied your comment.
                     </a>

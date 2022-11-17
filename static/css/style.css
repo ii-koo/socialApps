@@ -9,6 +9,10 @@
     margin-right: 0.5rem;
 }
 
+.child-comment{
+    margin-left:2rem;
+}
+
 .post-image{
     max-width:100%;
     height:auto;
