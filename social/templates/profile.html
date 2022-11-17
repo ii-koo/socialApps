@@ -158,12 +158,18 @@
                             {% endif %}
                         </div>
                          <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
-                        {% if post.image.count > 0 %}
+                        {% if post.image.count > 1 %}
                             <div class="row">
                                 {% for img in post.image.all %}
                                     <div class="col-md-6 col xs-10">
                                         <img src="{{ img.image.url }}" class="post-image">
                                     </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                {% for img in post.image.all %}
+                                    <img src="{{ img.image.url }}" class="post-image">
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -182,7 +188,7 @@
                     {% endif %}
                 </div>
                  <a href="{% url 'post-detail' post.pk %}" class="stretched-link"></a>
-                {% if post.image.count > 0 %}
+                {% if post.image.count > 1 %}
                     <div class="row">
                         {% for img in post.image.all %}
                             <div class="col-md-6 col xs-10">
@@ -190,6 +196,12 @@
                             </div>
                         {% endfor %}
                     </div>
+                {% else %}
+                <div class="row">
+                    {% for img in post.image.all %}
+                        <img src="{{ img.image.url }}" class="post-image">
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
             {% endif %}
