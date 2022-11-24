@@ -139,7 +139,7 @@ class ProfileView(View):
         user = profile.user
         form = SharedForm()
         posts = Post.objects.annotate(number_of_comments=Count('comment_set')).filter \
-            (Q(author=user) | Q(shared_user=True)).order_by('-shared_on', '-created_on')
+            (Q(author=user) | Q(shared_user=user)).order_by('-shared_on', '-created_on')
         followers = profile.followers.all()
 
         is_following = None
