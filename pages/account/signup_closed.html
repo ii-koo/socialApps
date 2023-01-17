@@ -1,11 +1,15 @@
-{% extends "account/base.html" %}
+{% extends "layouts/base.html" %}
+{% load crispy_forms_tags %}
 
 {% load i18n %}
 
 {% block head_title %}{% trans "Sign Up Closed" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Sign Up Closed" %}</h1>
+<h1 class="text-center">{% trans "Sign Up Closed" %}</h1>
 
 <p>{% trans "We are sorry, but the sign up is currently closed." %}</p>
+<div class="text-center">
+    <a href="{% url 'account_login' %}" class="text-decoration-none">Login Here</a>
+</div>
 {% endblock %}

@@ -139,7 +139,7 @@
                         <img src="{{ post.author.profile.picture.url }}" width="30" height="30" class="rounded-circle post-img">
                     </a>
                     <p><strong>
-                        {% if post.author.is_superuser %}
+                        {% if post.author.profile.is_superuser %}
                             {{ post.author.profile.name }} <a href="" class="a-disabled"><i class="fa-solid fa-circle-check"></i></a>
                         {% else%}
                             {{ post.author.profile.name }}
